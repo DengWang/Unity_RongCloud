@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
-
+using RongCloud;
 public class Demo : MonoBehaviour
 {
 
@@ -28,5 +28,13 @@ public class Demo : MonoBehaviour
 		}
 	}
 	
+
+
+
+	void OnGUI() {
+		if( GUI.Button(new Rect(50,50,100,50),"SendMessage")){
+			RongCloudBinding.SendTextMessage (RCConversationType.ConversationType_PRIVATE, "1", "nihao" + Time.realtimeSinceStartup,Time.realtimeSinceStartup.ToString());
+		}
+	}
 
 }
