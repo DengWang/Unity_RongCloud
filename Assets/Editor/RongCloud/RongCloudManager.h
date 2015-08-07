@@ -11,6 +11,6 @@
 @interface RongCloudManager : NSObject <RCConnectionStatusChangeDelegate,RCIMClientReceiveMessageDelegate>
 
 
-+ (RongCloudMnager*)sharedManager;
++ (RongCloudManager*)sharedManager;
 
 @end

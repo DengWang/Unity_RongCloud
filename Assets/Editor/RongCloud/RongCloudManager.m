@@ -9,15 +9,15 @@
 #import <RongIMLib/RongIMLib.h>
 #import "RongCloudManager.h"
 
-@implementation RongCloudMnager
+@implementation RongCloudManager
 
 
-+ (RongCloudMnager*)sharedManager
++ (RongCloudManager*)sharedManager
 {
-    static RongCloudMnager *sharedManager = nil;
+    static RongCloudManager *sharedManager = nil;
     
     if( !sharedManager )
-        sharedManager = [[RongCloudMnager alloc] init];
+        sharedManager = [[RongCloudManager alloc] init];
     
     return sharedManager;
 }
@@ -57,7 +57,7 @@
 {
     if ( [message.content isMemberOfClass:[RCTextMessage class]]) {
         RCTextMessage *msg = (RCTextMessage *)message.content;
-        NSString * json = [RongCloudMnager jsonFromObject:@{
+        NSString * json = [RongCloudManager jsonFromObject:@{
                                                             @"conversationType": [NSString stringWithFormat:@"%i",message.conversationType],
                                                             @"targetId":message.targetId,
                                                             @"messageId":[NSString stringWithFormat:@"%li",message.messageId],
