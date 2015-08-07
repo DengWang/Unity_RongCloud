@@ -266,7 +266,7 @@ PlayerSettings:
   - iOS::Architecture
   - iOS::ScriptingBackend
   iOS::Architecture: 0
-  iOS::ScriptingBackend: 1
+  iOS::ScriptingBackend: 0
   firstStreamedLevelWithResources: 0
   unityRebuildLibraryVersion: 9
   unityForwardCompatibleVersion: 39
