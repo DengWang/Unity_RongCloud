@@ -57,6 +57,20 @@ void _sendTextMessage(int conversationType,const char * targetId, const char * c
     }];
 }
 
+void _getUserInfo(const char * userId){
+    [[RCIMClient sharedRCIMClient] getUserInfo:GetStringParam(userId) success:^(RCUserInfo *userInfo) {
+        NSString * json = [RongCloudManager jsonFromObject:@{
+                                                             @"userId": userInfo.userId,
+                                                             @"name":userInfo.name,
+                                                             @"portraitUri":userInfo.portraitUri
+                                                            }];
+
+        UnitySendMessage( RONGCLOUDMANAGER, "onGetUserInfoSuccess", json.UTF8String);
+    } error:^(RCErrorCode status) {
+        UnitySendMessage( RONGCLOUDMANAGER, "onGetUserInfoFailed", [NSString stringWithFormat:@"%i",status].UTF8String);
+    }];
+}
+
 
 
 

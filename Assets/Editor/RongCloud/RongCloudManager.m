@@ -69,9 +69,11 @@
                                                             @"sentTime":[NSString stringWithFormat:@"%lli",message.sentTime],
                                                             @"objectName":message.objectName,
                                                             @"content":msg.content,
-                                                            @"extra": msg.extra == nil ? @"" : msg.extra,
-                                                            @"extra2":message.extra
+                                                            @"extraContent": msg.extra == nil ? @"" : msg.extra,
+                                                            @"extraMessage":message.extra
                                                             }];
+        NSLog(@"left %i",nLeft);
+        NSLog(@"object is null %i", object == nil);
         UnitySendMessage(RONGCLOUDMANAGER, "onTextReceived", json.UTF8String);
         
     }
