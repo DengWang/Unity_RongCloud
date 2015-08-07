@@ -7,7 +7,7 @@
 //
 
 #import <RongIMLib/RongIMLib.h>
-#import "RongCloudMnager.h"
+#import "RongCloudManager.h"
 
 @implementation RongCloudMnager
 

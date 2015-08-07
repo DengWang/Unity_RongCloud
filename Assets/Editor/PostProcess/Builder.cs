@@ -44,6 +44,26 @@ public class Builder : Editor
 		pbxProj.AddFrameworkToProject (target, "SystemConfiguration.framework", false);
 		pbxProj.AddFrameworkToProject (target, "UIKit.framework", false);
 
+		DirectoryInfo di = new DirectoryInfo (Application.dataPath);
+		string rongCloudLibFloder = Path.Combine (di.Parent.FullName, "RongCloudLib");
+
+
+
+
+		CopyAndReplaceDirectory(Path.Combine (rongCloudLibFloder, "RongIMLib.framework"), Path.Combine(path, "Frameworks/RongIMLib.framework"));
+		pbxProj.AddFileToBuild(target, pbxProj.AddFile("Frameworks/RongIMLib.framework", "Frameworks/RongIMLib.framework", PBXSourceTree.Source));
+
+
+//		pbxProj.AddFileToBuild (target, pbxProj.AddFile (Path.Combine (rongCloudLibFloder, "RongIMLib.framework"), "Frameworks/RongIMLib.framework", PBXSourceTree.Absolute));
+		pbxProj.AddFileToBuild (target, pbxProj.AddFile (Path.Combine (Application.dataPath, "Editor/RongCloud/RongCloudBinding.m"), "Libraries/RongCloudBinding.m", PBXSourceTree.Absolute));
+		pbxProj.AddFileToBuild (target, pbxProj.AddFile (Path.Combine (Application.dataPath, "Editor/RongCloud/RongCloudManager.m"), "Libraries/RongCloudManager.m", PBXSourceTree.Absolute));
+		pbxProj.AddFileToBuild (target, pbxProj.AddFile (Path.Combine (Application.dataPath, "Editor/RongCloud/RongCloudManager.h"), "Libraries/RongCloudManager.h", PBXSourceTree.Absolute));
+
+
+
+		pbxProj.SetBuildProperty(target, "FRAMEWORK_SEARCH_PATHS", "$(inherited)");
+		pbxProj.AddBuildProperty(target, "FRAMEWORK_SEARCH_PATHS", "$(PROJECT_DIR)/Frameworks");
+
 		pbxProj.WriteToFile (projPath);
 		PlistDocument plist = new PlistDocument ();
 		string plistPath = Path.Combine (path, "Info.plist");
@@ -57,5 +77,23 @@ public class Builder : Editor
 		#endif
 
 	}
+
+
+	internal static void CopyAndReplaceDirectory(string srcPath, string dstPath)
+	{
+		if (Directory.Exists(dstPath))
+			Directory.Delete(dstPath);
+		if (File.Exists(dstPath))
+			File.Delete(dstPath);
+
+		Directory.CreateDirectory(dstPath);
+
+		foreach (var file in Directory.GetFiles(srcPath))
+			File.Copy(file, Path.Combine(dstPath, Path.GetFileName(file)));
+
+		foreach (var dir in Directory.GetDirectories(srcPath))
+			CopyAndReplaceDirectory(dir, Path.Combine(dstPath, Path.GetFileName(dir)));
+	}
+
 
 }

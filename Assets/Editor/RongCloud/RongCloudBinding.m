@@ -10,7 +10,7 @@
 
 #import "UnityAppController.h"
 #import <RongIMLib/RongIMLib.h>
-#import "RongCloudMnager.h"
+#import "RongCloudManager.h"
 
 // Converts NSString to C style string by way of copy (Mono will free it)
 #define MakeStringCopy( _x_ ) ( _x_ != NULL && [_x_ isKindOfClass:[NSString class]] ) ? strdup( [_x_ UTF8String] ) : NULL
@@ -35,8 +35,8 @@ void _connectToRongCloudServer(const char * token){
     
     // 快速集成第二步，连接融云服务器
     [[RCIMClient sharedRCIMClient] connectWithToken:GetStringParam(token) success: ^(NSString *userId) {
-        [[RCIMClient sharedRCIMClient] setReceiveMessageDelegate:[RongCloudMnager sharedManager] object:nil];
-        [[RCIMClient sharedRCIMClient] setRCConnectionStatusChangeDelegate:[RongCloudMnager sharedManager]];
+        [[RCIMClient sharedRCIMClient] setReceiveMessageDelegate:[RongCloudManager sharedManager] object:nil];
+        [[RCIMClient sharedRCIMClient] setRCConnectionStatusChangeDelegate:[RongCloudManager sharedManager]];
         UnitySendMessage( RONGCLOUDMANAGER, "onConnectSuccess", userId.UTF8String);
     }error:^(RCConnectErrorCode status) {
         // Connect 失败
