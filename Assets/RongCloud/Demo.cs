@@ -12,7 +12,7 @@ public class Demo : MonoBehaviour
 	{
 		RongCloudBinding.Init (appKey);
 		NotificationServices.RegisterForRemoteNotificationTypes (RemoteNotificationType.Alert);
-		RongCloudBinding.ConnectToRongCloudServer (token);
+		RongCloudBinding.ConnectWithToken (token);
 	}
 
 
@@ -33,7 +33,7 @@ public class Demo : MonoBehaviour
 
 	void OnGUI() {
 		if( GUI.Button(new Rect(50,50,100,50),"SendMessage")){
-			RongCloudBinding.SendTextMessage (RCConversationType.ConversationType_PRIVATE, "1", "nihao" + Time.realtimeSinceStartup,Time.realtimeSinceStartup.ToString());
+			RongCloudBinding.SendTextMessage (RCConversationType.ConversationType_PRIVATE, "1", "nihao" + Time.realtimeSinceStartup,Time.realtimeSinceStartup.ToString(),"");
 		}
 	}
 

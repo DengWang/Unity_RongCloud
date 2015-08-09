@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
+using System.Collections.Generic;
 using System;
 
 namespace RongCloud
@@ -49,24 +50,24 @@ namespace RongCloud
 			}
 		}
 
-		public static event Action<string> onSendMessageSuccessEvent;
+		public static event Action<string> onSendTextMessageSuccessEvent;
 
-		public void onSendMessageSuccess (string messageId)
+		public void onSendTextMessageSuccess (string messageId)
 		{
 			Debug.Log ("onSendMessageSuccess : " + messageId);
-			if (onSendMessageSuccessEvent != null) {
-				onSendMessageSuccessEvent (messageId);
+			if (onSendTextMessageSuccessEvent != null) {
+				onSendTextMessageSuccessEvent (messageId);
 			}
 		}
 
-		public static event Action<RCErrorCode> onSendMessageFailedEvent;
+		public static event Action<RCErrorCode> onSendTextMessageFailedEvent;
 
-		public void onSendMessageFailed (string status)
+		public void onSendTextMessageFailed (string status)
 		{
 			var val = (RCErrorCode)int.Parse (status);
 			Debug.Log ("sendMessageFailed : " + val);
-			if (onSendMessageFailedEvent != null) {
-				onSendMessageFailedEvent (val);
+			if (onSendTextMessageFailedEvent != null) {
+				onSendTextMessageFailedEvent (val);
 			}
 		}
 
@@ -77,6 +78,257 @@ namespace RongCloud
 			Debug.Log ("onTextReceived : " + messageJson);
 			if (onTextReceivedEvent != null) {
 				onTextReceivedEvent (messageJson);
+			}
+		}
+
+
+
+		public static event Action<RCUserInfo> onGetUserInfoSuccessEvent;
+
+		public void onGetUserInfoSuccess (string json)
+		{
+			Debug.Log ("onGetUserInfoSuccess : " + json);
+			if (onGetUserInfoSuccessEvent != null) {
+				onGetUserInfoSuccessEvent (RCUserInfo.DecodeFromJson (json));
+			}
+		}
+
+
+		public static event Action<RCErrorCode> onGetUserInfoFailedEvent;
+
+		public void onGetUserInfoFailed (string errorCode)
+		{
+			var val = (RCErrorCode)int.Parse (errorCode);
+			Debug.Log ("onGetUserInfoFailed : " + val);
+			if (onGetUserInfoFailedEvent != null) {
+				onGetUserInfoFailedEvent (val);
+			}
+		}
+
+
+		public static event Action<RCConversationNotificationStatus> onGetConversationNotificationStatusSuccessEvent;
+		public static event Action<RCErrorCode> onGetConversationNotificationStatusFailedEvent;
+
+		public void onGetConversationNotificationStatusSuccess (string status)
+		{
+			var val = (RCConversationNotificationStatus)int.Parse (status);
+			Debug.Log ("onGetConversationNotificationStatusSuccess : " + val);
+			if (onGetConversationNotificationStatusSuccessEvent != null) {
+				onGetConversationNotificationStatusSuccessEvent (val);
+			}
+		}
+
+		public void onGetConversationNotificationStatusFailed (string errorCode)
+		{
+			var val = (RCErrorCode)int.Parse (errorCode);
+			Debug.Log ("onGetConversationNotificationStatusFailed : " + val);
+			if (onGetConversationNotificationStatusFailedEvent != null) {
+				onGetConversationNotificationStatusFailedEvent (val);
+			}
+		}
+
+
+
+		public static event Action<RCConversationNotificationStatus> onSetConversationNotificationStatusSuccessEvent;
+		public static event Action<RCErrorCode> onSetConversationNotificationStatusFailedEvent;
+
+		public void onSetConversationNotificationStatusSuccess (string status)
+		{
+			var val = (RCConversationNotificationStatus)int.Parse (status);
+			Debug.Log ("onSetConversationNotificationStatusSuccess : " + val);
+			if (onSetConversationNotificationStatusSuccessEvent != null) {
+				onSetConversationNotificationStatusSuccessEvent (val);
+			}
+		}
+
+		public void onSetConversationNotificationStatusFailed (string errorCode)
+		{
+			var val = (RCErrorCode)int.Parse (errorCode);
+			Debug.Log ("onSetConversationNotificationStatusFailed : " + val);
+			if (onSetConversationNotificationStatusFailedEvent != null) {
+				onSetConversationNotificationStatusFailedEvent (val);
+			}
+		}
+
+		public static event Action onSyncGroupsSuccessEvent;
+		public static event Action<RCErrorCode> onSyncGroupsFailedEvent;
+
+
+		public void onSyncGroupsSuccess (string empty)
+		{
+			Debug.Log ("onSyncGroupsSuccess");
+			if (onSyncGroupsSuccessEvent != null) {
+				onSyncGroupsSuccessEvent ();
+			}
+		}
+
+		public void onSyncGroupsFailed (string errorCode)
+		{
+			var val = (RCErrorCode)int.Parse (errorCode);
+			Debug.Log ("onSyncGroupsFailedEvent : " + val);
+			if (onSyncGroupsFailedEvent != null) {
+				onSyncGroupsFailedEvent (val);
+			}
+		}
+
+
+		public static event Action onJoinGroupSuccessEvent;
+
+		public static event Action<RCErrorCode> onJoinGroupFailedEvent;
+
+		public void onJoinGroupSuccess (string empty)
+		{
+			Debug.Log ("onJoinGroupSuccess");
+			if (onJoinGroupSuccessEvent != null) {
+				onJoinGroupSuccessEvent ();
+			}
+		}
+
+
+		public void onJoinGroupFailed (string errorCode)
+		{
+			var val = (RCErrorCode)int.Parse (errorCode);
+			Debug.Log ("onJoinGroupFailed : " + val);
+			if (onJoinGroupFailedEvent != null) {
+				onJoinGroupFailedEvent (val);
+			}
+		}
+
+
+		public static event Action onQuitGroupSuccessEvent;
+
+		public static event Action<RCErrorCode> onQuitGroupFailedEvent;
+
+		public void onQuitGroupSuccess (string empty)
+		{
+			Debug.Log ("onQuitGroupSuccess");
+			if (onQuitGroupSuccessEvent != null) {
+				onQuitGroupSuccessEvent ();
+			}
+		}
+
+
+		public void onQuitGroupFailed (string errorCode)
+		{
+			var val = (RCErrorCode)int.Parse (errorCode);
+			Debug.Log ("onQuitGroupFailed : " + val);
+			if (onQuitGroupFailedEvent != null) {
+				onQuitGroupFailedEvent (val);
+			}
+		}
+
+
+
+		public static event Action onAddToBlacklistSuccessEvent;
+
+		public static event Action<RCErrorCode> onAddToBlacklistFailedEvent;
+
+		public void onAddToBlacklistSuccess (string empty)
+		{
+			Debug.Log ("onAddToBlacklistSuccess");
+			if (onAddToBlacklistSuccessEvent != null) {
+				onAddToBlacklistSuccessEvent ();
+			}
+		}
+
+
+		public void onAddToBlacklistFailed (string errorCode)
+		{
+			var val = (RCErrorCode)int.Parse (errorCode);
+			Debug.Log ("onAddToBlacklistFailed : " + val);
+			if (onAddToBlacklistFailedEvent != null) {
+				onAddToBlacklistFailedEvent (val);
+			}
+		}
+
+
+
+		public static event Action onRemoveFromBlacklistSuccessEvent;
+
+		public static event Action<RCErrorCode> onRemoveFromBlacklistFailedEvent;
+
+		public void onRemoveFromBlacklistSuccess (string empty)
+		{
+			Debug.Log ("onRemoveFromBlacklistSuccess");
+			if (onRemoveFromBlacklistSuccessEvent != null) {
+				onRemoveFromBlacklistSuccessEvent ();
+			}
+		}
+
+
+		public void onRemoveFromBlacklistFailed (string errorCode)
+		{
+			var val = (RCErrorCode)int.Parse (errorCode);
+			Debug.Log ("onRemoveFromBlacklistFailed : " + val);
+			if (onRemoveFromBlacklistFailedEvent != null) {
+				onRemoveFromBlacklistFailedEvent (val);
+			}
+		}
+
+
+
+		public static event Action<int> onGetBlacklistStatusSuccessEvent;
+
+		public static event Action<RCErrorCode> onGetBlacklistStatusFailedEvent;
+
+		public void onGetBlacklistStatusSuccess (string status)
+		{
+			Debug.Log ("onGetBlacklistStatusSuccess :" + status);
+			if (onGetBlacklistStatusSuccessEvent != null) {
+				onGetBlacklistStatusSuccessEvent (int.Parse (status));
+			}
+		}
+
+
+		public void onGetBlacklistStatusFailed (string errorCode)
+		{
+			var val = (RCErrorCode)int.Parse (errorCode);
+			Debug.Log ("onGetBlacklistStatusFailed : " + val);
+			if (onGetBlacklistStatusFailedEvent != null) {
+				onGetBlacklistStatusFailedEvent (val);
+			}
+		}
+
+
+
+
+		public static event Action<List<string>> onGetBlacklistSuccessEvent;
+
+		public static event Action<RCErrorCode> onGetBlacklistFailedEvent;
+
+		public void onGetBlacklistSuccess (string json)
+		{
+			Debug.Log ("onGetBlacklistSuccess :" + json);
+			if (onGetBlacklistSuccessEvent != null) {
+				List<object> tempList = MiniJSON.Json.Deserialize (json) as List<object>;
+				List<string> userIdList = new List<string> (tempList.Count);
+				foreach (var item in tempList) {
+					userIdList.Add (item.ToString ());
+				}
+				onGetBlacklistSuccessEvent (userIdList);
+			}
+		}
+
+
+		public void onGetBlacklistFailed (string errorCode)
+		{
+			var val = (RCErrorCode)int.Parse (errorCode);
+			Debug.Log ("onGetBlacklistFailed : " + val);
+			if (onGetBlacklistFailedEvent != null) {
+				onGetBlacklistFailedEvent (val);
+			}
+		}
+
+		public static event Action<List<RCMessage>> onGetRemoteHistoryMessagesSuccessEvent;
+
+		public void onGetRemoteHistoryMessagesSuccess (string json)
+		{
+			Debug.Log ("onGetRemoteHistoryMessagesSuccess : " + json);
+			if (onGetRemoteHistoryMessagesSuccessEvent != null) {
+
+				List<RCMessage> messages;
+
+				onGetRemoteHistoryMessagesSuccessEvent (messages);
 			}
 		}
 
