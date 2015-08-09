@@ -326,7 +326,7 @@ namespace RongCloud
 			Debug.Log ("onGetRemoteHistoryMessagesSuccess : " + json);
 			if (onGetRemoteHistoryMessagesSuccessEvent != null) {
 
-				List<RCMessage> messages;
+				List<RCMessage> messages = null;
 
 				onGetRemoteHistoryMessagesSuccessEvent (messages);
 			}
