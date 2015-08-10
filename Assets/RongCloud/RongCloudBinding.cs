@@ -158,10 +158,12 @@ namespace RongCloud
 		[DllImport ("__Internal")]
 		private static extern string _getLatestMessages (int conversationType, string targetId, int count);
 
-		public static string GetLatestMessages (RCConversationType conversationType, string targetId, int count)
+		public static List<RCMessage> GetLatestMessages (RCConversationType conversationType, string targetId, int count)
 		{
 			if (Application.platform == RuntimePlatform.IPhonePlayer) {
-				return _getLatestMessages ((int)conversationType, targetId, count);
+				string json = _getLatestMessages ((int)conversationType, targetId, count);
+				Debug.Log (json);
+				return PraseRCMessages (json);
 			}
 			return null;
 		}
@@ -169,10 +171,12 @@ namespace RongCloud
 		[DllImport ("__Internal")]
 		private static extern string _getHistoryMessages (int conversationType, string targetId, long messageId, int count);
 
-		public static string GetHistoryMessages (RCConversationType conversationType, string targetId, long messageId, int count)
+		public static List<RCMessage> GetHistoryMessages (RCConversationType conversationType, string targetId, long messageId, int count)
 		{
 			if (Application.platform == RuntimePlatform.IPhonePlayer) {
-				return _getHistoryMessages ((int)conversationType, targetId, messageId, count);
+				string json = _getHistoryMessages ((int)conversationType, targetId, messageId, count);
+				Debug.Log (json);
+				return PraseRCMessages (json);
 			}
 			return null;
 		}
@@ -361,5 +365,60 @@ namespace RongCloud
 				_getRemoteHistoryMessages ((int)conversationType, targetId, recordTime, count);
 			}
 		}
+
+
+
+
+		[DllImport ("__Internal")]
+		private static extern void _joinChatRoom (string targetId, int messageCount);
+
+		public static void JoinChatRoom (string targetId, int messageCount)
+		{
+			if (Application.platform == RuntimePlatform.IPhonePlayer) {
+				_joinChatRoom (targetId, messageCount);
+			}
+		}
+
+		[DllImport ("__Internal")]
+		private static extern void _quitChatRoom (string targetId);
+
+		public static void QuitChatRoom (string targetId)
+		{
+			if (Application.platform == RuntimePlatform.IPhonePlayer) {
+				_quitChatRoom (targetId);
+			}
+		}
+
+//		[DllImport ("__Internal")]
+//		private static extern string _getConversationList (string  conversationTypeList);
+//
+//		public static string GetConversationList (List<RCConversationType> conversationTypeList)
+//		{
+//			if (Application.platform == RuntimePlatform.IPhonePlayer) {
+//
+//				List<int> tempConversationTypeList = new List<int> ();
+//				foreach (var item in conversationTypeList) {
+//					tempConversationTypeList.Add ((int)item);
+//				}
+//				return _getConversationList (MiniJSON.Json.Serialize (tempConversationTypeList));
+//			}
+//			return null;
+//		}
+
+
+
+		private static List<RCMessage> PraseRCMessages (string json)
+		{
+			List<object> tempList = MiniJSON.Json.Deserialize (json) as List<object>;
+			List<RCMessage> messages = new List<RCMessage> ();
+			if (tempList != null) {
+				foreach (var item in tempList) {
+					var message = RCMessage.DecodeFromJson (item as Dictionary<string,object>);	
+					messages.Add (message);
+				}
+			} 
+			return messages;
+		}
+
 	}
 }

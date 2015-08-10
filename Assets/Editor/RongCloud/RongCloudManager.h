@@ -12,5 +12,7 @@
 
 
 + (RongCloudManager*)sharedManager;
-
++ (id)objectFromJson:(NSString*)json;
++ (NSString*)jsonFromObject:(id)object;
++ (NSString *) RCMessageToJson:(RCMessage *) message;
 @end

@@ -41,10 +41,7 @@ namespace RongCloud
 		{
 			Dictionary<string,object> dict = MiniJSON.Json.Deserialize (json) as Dictionary<string,object>;
 			if (dict != null) {
-				RCUserInfo userInfo = new RCUserInfo ();
-				userInfo.userId = dict ["userId"].ToString ();
-				userInfo.name = dict ["name"].ToString ();
-				userInfo.portraitUri = dict ["portraitUri"].ToString ();
+				RCUserInfo userInfo = new RCUserInfo (dict ["userId"].ToString (), dict ["name"].ToString (), dict ["portraitUri"].ToString ());
 				return userInfo;
 			} else {
 				Debug.LogError ("Deserialize error " + json);
@@ -53,7 +50,7 @@ namespace RongCloud
 
 		}
 
-		public void Init (string userId, string name, string portraitUri)
+		public RCUserInfo (string userId, string name, string portraitUri)
 		{
 			this.userId = userId;
 			this.name = name;

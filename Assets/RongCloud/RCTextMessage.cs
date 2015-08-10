@@ -15,6 +15,12 @@ namespace RongCloud
 			get;
 			set;
 		}
+
+
+		public RCTextMessage(string content, string extra) {
+			this.content = content;
+			this.extra = extra;
+		}
 	}
 
 }

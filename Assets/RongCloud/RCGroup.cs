@@ -40,10 +40,7 @@ namespace RongCloud
 		{
 			Dictionary<string,object> dict = MiniJSON.Json.Deserialize (json) as Dictionary<string,object>;
 			if (dict != null) {
-				RCGroup group = new RCGroup ();
-				group.groupId = dict ["groupId"].ToString ();
-				group.groupName = dict ["groupName"].ToString ();
-				group.portraitUri = dict ["portraitUri"].ToString ();
+				RCGroup group = new RCGroup (dict ["groupId"].ToString (), dict ["groupName"].ToString (), dict ["portraitUri"].ToString ());
 				return group;
 			} else {
 				Debug.LogError ("Deserialize error " + json);
@@ -51,7 +48,7 @@ namespace RongCloud
 			}
 		}
 
-		public void Init (string groupId, string groupName, string portraitUri)
+		public RCGroup (string groupId, string groupName, string portraitUri)
 		{
 			this.groupId = groupId;
 			this.groupName = groupName;

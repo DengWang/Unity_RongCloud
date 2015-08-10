@@ -71,13 +71,13 @@ namespace RongCloud
 			}
 		}
 
-		public static event Action<string> onTextReceivedEvent;
+		public static event Action<RCMessage> onReceivedEvent;
 
-		public void onTextReceived (string messageJson)
+		public void onReceived (string messageJson)
 		{
-			Debug.Log ("onTextReceived : " + messageJson);
-			if (onTextReceivedEvent != null) {
-				onTextReceivedEvent (messageJson);
+			Debug.Log ("onReceived : " + messageJson);
+			if (onReceivedEvent != null) {
+				onReceivedEvent (RCMessage.DecodeFromJson (messageJson));
 			}
 		}
 
@@ -331,6 +331,55 @@ namespace RongCloud
 				onGetRemoteHistoryMessagesSuccessEvent (messages);
 			}
 		}
+
+
+
+
+
+		public static event Action onJoinChatRoomSuccessEvent;
+
+		public static event Action<RCErrorCode> onJoinChatRoomFailedEvent;
+
+		public void onJoinChatRoomSuccess (string empty)
+		{
+			Debug.Log ("onJoinChatRoomSuccess");
+			if (onJoinChatRoomSuccessEvent != null) {
+				onJoinChatRoomSuccessEvent ();
+			}
+		}
+
+		public void onJoinChatRoomFailed (string errorCode)
+		{
+			var val = (RCErrorCode)int.Parse (errorCode);
+			Debug.Log ("onJoinChatRoomFailed : " + val);
+			if (onJoinChatRoomFailedEvent != null) {
+				onJoinChatRoomFailedEvent (val);
+			}
+		}
+
+
+
+		public static event Action onQuitChatRoomSuccessEvent;
+
+		public static event Action<RCErrorCode> onQuitChatRoomFailedEvent;
+
+		public void onQuitChatRoomSuccess (string empty)
+		{
+			Debug.Log ("onQuitChatRoomSuccess");
+			if (onQuitChatRoomSuccessEvent != null) {
+				onQuitChatRoomSuccessEvent ();
+			}
+		}
+
+		public void onQuitChatRoomFailed (string errorCode)
+		{
+			var val = (RCErrorCode)int.Parse (errorCode);
+			Debug.Log ("onQuitChatRoomFailed : " + val);
+			if (onQuitChatRoomFailedEvent != null) {
+				onQuitChatRoomFailedEvent (val);
+			}
+		}
+
 
 	}
 }
