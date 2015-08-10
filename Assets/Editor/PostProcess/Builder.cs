@@ -55,9 +55,9 @@ public class Builder : Editor
 
 
 //		pbxProj.AddFileToBuild (target, pbxProj.AddFile (Path.Combine (rongCloudLibFloder, "RongIMLib.framework"), "Frameworks/RongIMLib.framework", PBXSourceTree.Absolute));
-		pbxProj.AddFileToBuild (target, pbxProj.AddFile (Path.Combine (Application.dataPath, "Editor/RongCloud/RongCloudBinding.m"), "Libraries/RongCloudBinding.m", PBXSourceTree.Absolute));
-		pbxProj.AddFileToBuild (target, pbxProj.AddFile (Path.Combine (Application.dataPath, "Editor/RongCloud/RongCloudManager.m"), "Libraries/RongCloudManager.m", PBXSourceTree.Absolute));
-		pbxProj.AddFileToBuild (target, pbxProj.AddFile (Path.Combine (Application.dataPath, "Editor/RongCloud/RongCloudManager.h"), "Libraries/RongCloudManager.h", PBXSourceTree.Absolute));
+		pbxProj.AddFileToBuild (target, pbxProj.AddFile (Path.Combine (Application.dataPath, "Editor/RongCloud/iOS/RongCloudBinding.m"), "Libraries/RongCloudBinding.m", PBXSourceTree.Absolute));
+		pbxProj.AddFileToBuild (target, pbxProj.AddFile (Path.Combine (Application.dataPath, "Editor/RongCloud/iOS/RongCloudManager.m"), "Libraries/RongCloudManager.m", PBXSourceTree.Absolute));
+		pbxProj.AddFileToBuild (target, pbxProj.AddFile (Path.Combine (Application.dataPath, "Editor/RongCloud/iOS/RongCloudManager.h"), "Libraries/RongCloudManager.h", PBXSourceTree.Absolute));
 
 
 

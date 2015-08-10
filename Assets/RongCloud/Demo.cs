@@ -20,7 +20,9 @@ public class Demo : MonoBehaviour
 	void Start ()
 	{
 		RongCloudBinding.Init (appKey);
+		#if UNITY_IPHONE
 		NotificationServices.RegisterForRemoteNotificationTypes (RemoteNotificationType.Alert);
+		#endif
 		RongCloudBinding.ConnectWithToken (token);
 
 
@@ -49,7 +51,7 @@ public class Demo : MonoBehaviour
 		RongCloudBinding.SetConversationNotificationStatus (RCConversationType.ConversationType_GROUP, "1", false);
 	}
 
-
+	#if UNITY_IPHONE
 	bool tokenSent = false;
 
 	void Update ()
@@ -63,7 +65,7 @@ public class Demo : MonoBehaviour
 			}
 		}
 	}
-
+	#endif
 
 
 
