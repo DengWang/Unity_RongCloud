@@ -64,9 +64,6 @@
 		</receiver>
 		<receiver android:name="io.rong.imlib.ConnectChangeReceiver" />
 		<meta-data android:name="RONG_CLOUD_APP_KEY" android:value="kj7swf8o7cvl2" />
-		<!--<meta-data-->
-		<!--android:name="RONG_CLOUD_APP_KEY"-->
-		<!--android:value="c9kqb3rdkh5wj" />-->
 		<!--end rongcloud-->
 	</application>
 	<uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />

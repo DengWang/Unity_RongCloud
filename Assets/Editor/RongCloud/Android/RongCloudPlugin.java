@@ -1,24 +1,29 @@
 package com.volvapps.rongcloudplugin;
 
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import android.util.Log;
 import io.rong.imlib.RongIMClient;
 import io.rong.imlib.RongIMClient.BlacklistStatus;
 import io.rong.imlib.RongIMClient.ErrorCode;
 import io.rong.imlib.model.Conversation;
 import io.rong.imlib.model.Conversation.ConversationNotificationStatus;
 import io.rong.imlib.model.Message;
-import io.rong.imlib.model.UserData;
 import io.rong.message.TextMessage;
 
 public class RongCloudPlugin extends RongCloudPluginBase {
 
-	
-	
-	public void _init(){
+	public void _init() {
 		RongIMClient.init(getActivity());
-		RongCloudEvent.init(getActivity());
+		RongCloudEvent.init();
 	}
-	
-	
+
 	public void _connectWithToken(String token) {
 		RongIMClient.connect(token, new RongIMClient.ConnectCallback() {
 			@Override
@@ -46,113 +51,21 @@ public class RongCloudPlugin extends RongCloudPluginBase {
 		});
 	}
 
-	public void _disconnect() {
-		RongIMClient.getInstance().disconnect();
-	}
-
-	public void _logout() {
-		RongIMClient.getInstance().logout();
-	}
-
-	public void _sendTextMessage(int conversationType, String targetId,
-			String content, String extra, String pushContent, String pushData) {
-		TextMessage textMessage = TextMessage.obtain(content);
-		textMessage.setExtra(extra);
-		RongIMClient.getInstance().sendMessage(
-				Conversation.ConversationType.setValue(conversationType),
-				targetId, textMessage, pushContent, pushData,
-				new RongIMClient.SendMessageCallback() {
-					@Override
-					public void onError(Integer messageId,
-							RongIMClient.ErrorCode e) {
-						UnitySendMessage("onSendTextMessageFailed", String.valueOf(e.getValue()));
-
-					}
+	public void _addToBlacklist(String userId) {
+		RongIMClient.getInstance().addToBlacklist(userId,
+				new RongIMClient.AddToBlackCallback() {
 
 					@Override
-					public void onSuccess(Integer integer) {
-						UnitySendMessage("onSendTextMessageSuccess",integer.toString());
-
-					}
-				}, new RongIMClient.ResultCallback<Message>() {
-
-					@Override
-					public void onError(ErrorCode e) {
-						// TODO Auto-generated method stub
-						UnitySendMessage("onSendTextMessageResultFailed",String.valueOf(e.getValue()));
-
-					}
-
-					@Override
-					public void onSuccess(Message message) {
-						// TODO Auto-generated method stub
-						UnitySendMessage("onSendTextMessageResultSuccess",JsonHelper.MessagetoJSON(message));
-					}
-				});
-
-	}
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-
-	public int _getTotalUnreadCount() {
-		return RongIMClient.getInstance().getTotalUnreadCount();
-	}
-
-	public int _getUnreadCount(int conversationType, String targetId) {
-		return RongIMClient.getInstance().getUnreadCount(
-				Conversation.ConversationType.setValue(conversationType),
-				targetId);
-	}
-
-	public String _getHistoryMessages(int conversationType, String targetId,
-			int oldestMessageId, int count) {
-		RongIMClient.getInstance().getHistoryMessages(
-				Conversation.ConversationType.setValue(conversationType),
-				targetId, oldestMessageId, count);
-		return "";
-	}
-
-	public String _getLatestMessages(int conversationType, String targetId,
-			int count) {
-		RongIMClient.getInstance().getLatestMessages(
-				Conversation.ConversationType.setValue(conversationType),
-				targetId, count);
-		return "";
-	}
-
-	public void _deleteMessages(int[] messageIds) {
-		RongIMClient.getInstance().deleteMessages(messageIds,
-				new RongIMClient.ResultCallback<Boolean>() {
-
-					@Override
-					public void onSuccess(Boolean paramT) {
-						// TODO Auto-generated method stub
-
+					public void onSuccess() {
+						UnitySendMessage("onAddToBlacklistSuccess", "");
 					}
 
 					@Override
 					public void onError(ErrorCode paramErrorCode) {
-						// TODO Auto-generated method stub
+						UnitySendMessage("onAddToBlacklistFailed",
+								String.valueOf(paramErrorCode.getValue()));
 
 					}
-
 				});
 	}
 
@@ -163,34 +76,36 @@ public class RongCloudPlugin extends RongCloudPluginBase {
 
 					@Override
 					public void onSuccess(Boolean paramT) {
-						// TODO Auto-generated method stub
+						UnitySendMessage("onClearMessagesSuccess",
+								String.valueOf(paramT));
 
 					}
 
 					@Override
 					public void onError(ErrorCode paramErrorCode) {
-						// TODO Auto-generated method stub
+						UnitySendMessage("onClearMessagesFailed",
+								String.valueOf(paramErrorCode.getValue()));
 
 					}
 
 				});
+
 	}
 
 	public void _clearMessagesUnreadStatus(int conversationType, String targetId) {
 		RongIMClient.getInstance().clearMessagesUnreadStatus(
 				Conversation.ConversationType.setValue(conversationType),
 				targetId, new RongIMClient.ResultCallback<Boolean>() {
-
 					@Override
 					public void onSuccess(Boolean paramT) {
-						// TODO Auto-generated method stub
-
+						UnitySendMessage("onClearMessagesUnreadStatusSuccess",
+								String.valueOf(paramT));
 					}
 
 					@Override
 					public void onError(ErrorCode paramErrorCode) {
-						// TODO Auto-generated method stub
-
+						UnitySendMessage("onClearMessagesUnreadStatusFailed",
+								String.valueOf(paramErrorCode.getValue()));
 					}
 
 				});
@@ -200,19 +115,53 @@ public class RongCloudPlugin extends RongCloudPluginBase {
 		RongIMClient.clearNotifications();
 	}
 
+	public void _deleteMessages(String messageIdsJson) {
+
+		try {
+			JSONArray jsonArray = new JSONArray(messageIdsJson);
+			int[] messageIds = new int[jsonArray.length()];
+			for (int i = 0; i < jsonArray.length(); ++i) {
+				messageIds[i] = jsonArray.getInt(i);
+			}
+			RongIMClient.getInstance().deleteMessages(messageIds,
+					new RongIMClient.ResultCallback<Boolean>() {
+						@Override
+						public void onSuccess(Boolean paramT) {
+							UnitySendMessage("onDeleteMessagesSuccess",
+									String.valueOf(paramT));
+						}
+
+						@Override
+						public void onError(ErrorCode paramErrorCode) {
+							UnitySendMessage("onDeleteMessagesFailed",
+									String.valueOf(paramErrorCode.getValue()));
+						}
+					});
+		} catch (JSONException e) {
+			Log.i(TAG, "failed to parse MessageIdJSON: " + e.getMessage());
+
+		}
+	}
+
+	public void _disconnect() {
+		RongIMClient.getInstance().disconnect();
+	}
+
 	public void _getBlacklist() {
 		RongIMClient.getInstance().getBlacklist(
 				new RongIMClient.GetBlacklistCallback() {
 
 					@Override
 					public void onSuccess(String[] paramT) {
-						// TODO Auto-generated method stub
+						UnitySendMessage("onGetBlacklistSuccess",
+								new JSONArray(Arrays.asList(paramT)).toString());
 
 					}
 
 					@Override
 					public void onError(ErrorCode paramErrorCode) {
-						// TODO Auto-generated method stub
+						UnitySendMessage("onGetBlacklistFailed",
+								String.valueOf(paramErrorCode.getValue()));
 
 					}
 				});
@@ -224,16 +173,18 @@ public class RongCloudPlugin extends RongCloudPluginBase {
 				.getBlacklistStatus(
 						userId,
 						new RongIMClient.ResultCallback<RongIMClient.BlacklistStatus>() {
-
 							@Override
 							public void onSuccess(BlacklistStatus paramT) {
-								// TODO Auto-generated method stub
+								UnitySendMessage("onGetBlacklistStatusSuccess",
+										String.valueOf(paramT.getValue()));
 
 							}
 
 							@Override
 							public void onError(ErrorCode paramErrorCode) {
-								// TODO Auto-generated method stub
+								UnitySendMessage("onGetBlacklistStatusFailed",
+										String.valueOf(paramErrorCode
+												.getValue()));
 
 							}
 
@@ -253,13 +204,18 @@ public class RongCloudPlugin extends RongCloudPluginBase {
 							@Override
 							public void onSuccess(
 									ConversationNotificationStatus paramT) {
-								// TODO Auto-generated method stub
+								UnitySendMessage(
+										"onGetConversationNotificationStatusSuccess",
+										String.valueOf(paramT.getValue()));
 
 							}
 
 							@Override
 							public void onError(ErrorCode paramErrorCode) {
-								// TODO Auto-generated method stub
+								UnitySendMessage(
+										"onGetConversationNotificationStatusFailed",
+										String.valueOf(paramErrorCode
+												.getValue()));
 
 							}
 
@@ -273,11 +229,26 @@ public class RongCloudPlugin extends RongCloudPluginBase {
 
 	public String _getCurrentUserId() {
 		return RongIMClient.getInstance().getCurrentUserId();
-
 	}
 
 	public long _getDeltaTime() {
 		return RongIMClient.getInstance().getDeltaTime();
+	}
+
+	public String _getHistoryMessages(int conversationType, String targetId,
+			int oldestMessageId, int count) {
+		List<Message> messages = RongIMClient.getInstance().getHistoryMessages(
+				Conversation.ConversationType.setValue(conversationType),
+				targetId, oldestMessageId, count);
+		return JsonHelper.MessagesToJSON(messages);
+	}
+
+	public String _getLatestMessages(int conversationType, String targetId,
+			int count) {
+		List<Message> messages = RongIMClient.getInstance().getLatestMessages(
+				Conversation.ConversationType.setValue(conversationType),
+				targetId, count);
+		return JsonHelper.MessagesToJSON(messages);
 	}
 
 	public void _getNotificationQuietHours() {
@@ -286,16 +257,54 @@ public class RongCloudPlugin extends RongCloudPluginBase {
 
 					@Override
 					public void onSuccess(String paramString, int paramInt) {
-						// TODO Auto-generated method stub
+						HashMap<String, Object> map = new HashMap<String, Object>();
+						map.put("startTime", paramString);
+						map.put("spanMinutes", paramInt);
+						UnitySendMessage("onGetNotificationQuietHoursSuccess",
+								new JSONObject(map).toString());
+					}
+
+					@Override
+					public void onError(ErrorCode paramErrorCode) {
+						UnitySendMessage("onGetNotificationQuietHoursFailed",
+								String.valueOf(paramErrorCode.getValue()));
+
+					}
+				});
+	}
+
+	public void _getRemoteHistoryMessages(int conversationType,
+			String targetId, long dataTime, int count) {
+		RongIMClient.getInstance().getRemoteHistoryMessages(
+				Conversation.ConversationType.setValue(conversationType),
+				targetId, dataTime, count,
+				new RongIMClient.ResultCallback<List<Message>>() {
+
+					@Override
+					public void onSuccess(List<Message> messages) {
+						UnitySendMessage("onGetRemoteHistoryMessagesSuccess",
+								JsonHelper.MessagesToJSON(messages));
 
 					}
 
 					@Override
 					public void onError(ErrorCode paramErrorCode) {
-						// TODO Auto-generated method stub
+						UnitySendMessage("onGetRemoteHistoryMessagesFailed",
+								String.valueOf(paramErrorCode.getValue()));
 
 					}
+
 				});
+	}
+
+	public int _getTotalUnreadCount() {
+		return RongIMClient.getInstance().getTotalUnreadCount();
+	}
+
+	public int _getUnreadCount(int conversationType, String targetId) {
+		return RongIMClient.getInstance().getUnreadCount(
+				Conversation.ConversationType.setValue(conversationType),
+				targetId);
 	}
 
 	public void _joinChatRoom(String chatRoomId, int count) {
@@ -304,13 +313,14 @@ public class RongCloudPlugin extends RongCloudPluginBase {
 
 					@Override
 					public void onSuccess() {
-						// TODO Auto-generated method stub
+						UnitySendMessage("onJoinChatRoomSuccess", "");
 
 					}
 
 					@Override
 					public void onError(ErrorCode paramErrorCode) {
-						// TODO Auto-generated method stub
+						UnitySendMessage("onJoinChatRoomFailed",
+								String.valueOf(paramErrorCode.getValue()));
 
 					}
 
@@ -323,17 +333,22 @@ public class RongCloudPlugin extends RongCloudPluginBase {
 
 					@Override
 					public void onSuccess() {
-						// TODO Auto-generated method stub
+						UnitySendMessage("onJoinGroupSuccess", "");
 
 					}
 
 					@Override
 					public void onError(ErrorCode paramErrorCode) {
-						// TODO Auto-generated method stub
+						UnitySendMessage("onJoinGroupFailed",
+								String.valueOf(paramErrorCode.getValue()));
 
 					}
 
 				});
+	}
+
+	public void _logout() {
+		RongIMClient.getInstance().logout();
 	}
 
 	public void _quitChatRoom(String chatRoomId) {
@@ -342,13 +357,14 @@ public class RongCloudPlugin extends RongCloudPluginBase {
 
 					@Override
 					public void onSuccess() {
-						// TODO Auto-generated method stub
+						UnitySendMessage("onQuitChatRoomSuccess", "");
 
 					}
 
 					@Override
 					public void onError(ErrorCode paramErrorCode) {
-						// TODO Auto-generated method stub
+						UnitySendMessage("onQuitChatRoomFailed",
+								String.valueOf(paramErrorCode.getValue()));
 
 					}
 				});
@@ -357,34 +373,40 @@ public class RongCloudPlugin extends RongCloudPluginBase {
 	public void _quitGroup(String groupId) {
 		RongIMClient.getInstance().quitGroup(groupId,
 				new RongIMClient.OperationCallback() {
-
 					@Override
 					public void onSuccess() {
-						// TODO Auto-generated method stub
+						UnitySendMessage("onQuitGroupSuccess", "");
 
 					}
 
 					@Override
 					public void onError(ErrorCode paramErrorCode) {
-						// TODO Auto-generated method stub
+						UnitySendMessage("onQuitGroupFailed",
+								String.valueOf(paramErrorCode.getValue()));
 
 					}
 				});
 	}
 
-	public void _addToBlacklist(String userId) {
-		RongIMClient.getInstance().addToBlacklist(userId,
-				new RongIMClient.AddToBlackCallback() {
-
+	public void _reconnect() {
+		RongIMClient.getInstance().reconnect(
+				new RongIMClient.ConnectCallback() {
 					@Override
-					public void onSuccess() {
-						// TODO Auto-generated method stub
+					public void onSuccess(String userId) {
+						UnitySendMessage("onReConnectSuccess", userId);
 
 					}
 
 					@Override
 					public void onError(ErrorCode paramErrorCode) {
-						// TODO Auto-generated method stub
+						UnitySendMessage("onReConnectFailed",
+								String.valueOf(paramErrorCode.getValue()));
+
+					}
+
+					@Override
+					public void onTokenIncorrect() {
+						UnitySendMessage("onReTokenIncorrect", "");
 
 					}
 				});
@@ -393,16 +415,16 @@ public class RongCloudPlugin extends RongCloudPluginBase {
 	public void _removeFromBlacklist(String userId) {
 		RongIMClient.getInstance().removeFromBlacklist(userId,
 				new RongIMClient.RemoveFromBlacklistCallback() {
-
 					@Override
 					public void onSuccess() {
-						// TODO Auto-generated method stub
+						UnitySendMessage("onRemoveFromBlacklistSuccess", "");
 
 					}
 
 					@Override
 					public void onError(ErrorCode paramErrorCode) {
-						// TODO Auto-generated method stub
+						UnitySendMessage("onRemoveFromBlacklistFailed",
+								String.valueOf(paramErrorCode.getValue()));
 
 					}
 				});
@@ -411,19 +433,58 @@ public class RongCloudPlugin extends RongCloudPluginBase {
 	public void _removeNotificationQuietHours() {
 		RongIMClient.getInstance().removeNotificationQuietHours(
 				new RongIMClient.OperationCallback() {
-
 					@Override
 					public void onSuccess() {
-						// TODO Auto-generated method stub
-
+						UnitySendMessage(
+								"onRemoveNotificationQuietHoursSuccess", "");
 					}
 
 					@Override
-					public void onError(ErrorCode arg0) {
-						// TODO Auto-generated method stub
+					public void onError(ErrorCode paramErrorCode) {
+						UnitySendMessage(
+								"onRemoveNotificationQuietHoursFailed",
+								String.valueOf(paramErrorCode.getValue()));
 
 					}
 				});
+	}
+
+	public void _sendTextMessage(int conversationType, String targetId,
+			String content, String extra, String pushContent, String pushData) {
+		TextMessage textMessage = TextMessage.obtain(content);
+		textMessage.setExtra(extra);
+		RongIMClient.getInstance().sendMessage(
+				Conversation.ConversationType.setValue(conversationType),
+				targetId, textMessage, pushContent, pushData,
+				new RongIMClient.SendMessageCallback() {
+					@Override
+					public void onError(Integer messageId,
+							RongIMClient.ErrorCode e) {
+						UnitySendMessage("onSendTextMessageFailed",
+								String.valueOf(e.getValue()));
+					}
+
+					@Override
+					public void onSuccess(Integer integer) {
+						UnitySendMessage("onSendTextMessageSuccess",
+								integer.toString());
+
+					}
+				}, new RongIMClient.ResultCallback<Message>() {
+					@Override
+					public void onError(ErrorCode e) {
+						UnitySendMessage("onSendTextMessageResultFailed",
+								String.valueOf(e.getValue()));
+
+					}
+
+					@Override
+					public void onSuccess(Message message) {
+						UnitySendMessage("onSendTextMessageResultSuccess",
+								JsonHelper.MessagetoJSON(message));
+					}
+				});
+
 	}
 
 	public void _setConversationNotificationStatus(int conversationType,
@@ -439,15 +500,19 @@ public class RongCloudPlugin extends RongCloudPluginBase {
 						new RongIMClient.ResultCallback<Conversation.ConversationNotificationStatus>() {
 
 							@Override
-							public void onError(ErrorCode arg0) {
-								// TODO Auto-generated method stub
+							public void onError(ErrorCode e) {
+								UnitySendMessage(
+										"onSetConversationNotificationStatusFailed",
+										String.valueOf(e.getValue()));
 
 							}
 
 							@Override
 							public void onSuccess(
-									ConversationNotificationStatus arg0) {
-								// TODO Auto-generated method stub
+									ConversationNotificationStatus status) {
+								UnitySendMessage(
+										"onSetConversationNotificationStatusSuccess",
+										String.valueOf(status.getValue()));
 
 							}
 						});
@@ -459,14 +524,16 @@ public class RongCloudPlugin extends RongCloudPluginBase {
 				new RongIMClient.ResultCallback<Boolean>() {
 
 					@Override
-					public void onError(ErrorCode arg0) {
-						// TODO Auto-generated method stub
+					public void onError(ErrorCode e) {
+						UnitySendMessage("onSetMessageReceivedStatusFailed",
+								String.valueOf(e.getValue()));
 
 					}
 
 					@Override
-					public void onSuccess(Boolean arg0) {
-						// TODO Auto-generated method stub
+					public void onSuccess(Boolean status) {
+						UnitySendMessage("onSetMessageReceivedStatusSuccess",
+								String.valueOf(status));
 
 					}
 
@@ -480,13 +547,15 @@ public class RongCloudPlugin extends RongCloudPluginBase {
 
 					@Override
 					public void onSuccess(Boolean paramT) {
-						// TODO Auto-generated method stub
+						UnitySendMessage("onSetMessageSentStatusSuccess",
+								String.valueOf(paramT));
 
 					}
 
 					@Override
 					public void onError(ErrorCode paramErrorCode) {
-						// TODO Auto-generated method stub
+						UnitySendMessage("onSetMessageSentStatusFailed",
+								String.valueOf(paramErrorCode.getValue()));
 
 					}
 
@@ -499,52 +568,54 @@ public class RongCloudPlugin extends RongCloudPluginBase {
 
 					@Override
 					public void onSuccess() {
-						// TODO Auto-generated method stub
+						UnitySendMessage("onSetNotificationQuietHoursSuccess",
+								"");
 
 					}
 
 					@Override
 					public void onError(ErrorCode paramErrorCode) {
-						// TODO Auto-generated method stub
+						UnitySendMessage("onSetNotificationQuietHoursFailed",
+								String.valueOf(paramErrorCode.getValue()));
 
 					}
 				});
 	}
 
-	public void _syncGroup(String groupList) {
-		RongIMClient.getInstance().syncGroup(null,
+	public void _syncGroups(String groupList) {
+		RongIMClient.getInstance().syncGroup(
+				JsonHelper.GroupsFromJSON(groupList),
 				new RongIMClient.OperationCallback() {
-
 					@Override
 					public void onSuccess() {
-						// TODO Auto-generated method stub
-
+						UnitySendMessage("onSyncGroupsSuccess", "");
 					}
 
 					@Override
 					public void onError(ErrorCode paramErrorCode) {
-						// TODO Auto-generated method stub
+						UnitySendMessage("onSyncGroupsFailed",
+								String.valueOf(paramErrorCode.getValue()));
 
 					}
 				});
 	}
 
-	public void _syncUserData(UserData userData) {
-		RongIMClient.getInstance().syncUserData(userData,
-				new RongIMClient.OperationCallback() {
-
-					@Override
-					public void onSuccess() {
-						// TODO Auto-generated method stub
-
-					}
-
-					@Override
-					public void onError(ErrorCode paramErrorCode) {
-						// TODO Auto-generated method stub
-
-					}
-				});
-	}
+	// public void _syncUserData(UserData userData) {
+	// RongIMClient.getInstance().syncUserData(userData,
+	// new RongIMClient.OperationCallback() {
+	//
+	// @Override
+	// public void onSuccess() {
+	// // TODO Auto-generated method stub
+	//
+	// }
+	//
+	// @Override
+	// public void onError(ErrorCode paramErrorCode) {
+	// // TODO Auto-generated method stub
+	//
+	// }
+	// });
+	// }
 
 }

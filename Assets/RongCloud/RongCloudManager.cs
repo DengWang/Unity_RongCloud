@@ -51,25 +51,51 @@ namespace RongCloud
 		}
 
 		public static event Action<string> onSendTextMessageSuccessEvent;
+		public static event Action<RCErrorCode> onSendTextMessageFailedEvent;
+
 
 		public void onSendTextMessageSuccess (string messageId)
 		{
-			Debug.Log ("onSendMessageSuccess : " + messageId);
+			Debug.Log ("onSendTextMessageSuccess : " + messageId);
 			if (onSendTextMessageSuccessEvent != null) {
 				onSendTextMessageSuccessEvent (messageId);
 			}
 		}
 
-		public static event Action<RCErrorCode> onSendTextMessageFailedEvent;
+
 
 		public void onSendTextMessageFailed (string status)
 		{
 			var val = (RCErrorCode)int.Parse (status);
-			Debug.Log ("sendMessageFailed : " + val);
+			Debug.Log ("onSendTextMessageFailed : " + val);
 			if (onSendTextMessageFailedEvent != null) {
 				onSendTextMessageFailedEvent (val);
 			}
 		}
+
+
+
+		public static event Action<RCErrorCode> onSendTextMessageResultFailedEvent;
+		public static event Action<RCMessage> onSendTextMessageResultSuccessEvent;
+
+		public void onSendTextMessageResultFailed (string status)
+		{
+			var val = (RCErrorCode)int.Parse (status);
+			Debug.Log ("onSendTextMessageResultFailed : " + val);
+			if (onSendTextMessageResultFailedEvent != null) {
+				onSendTextMessageResultFailedEvent (val);
+			}
+		}
+
+
+		public void onSendTextMessageResultSuccess (string json)
+		{
+			Debug.Log ("onSendTextMessageResultSuccess : " + json);
+			if (onSendTextMessageResultSuccessEvent != null) {
+				onSendTextMessageResultSuccessEvent (RCMessage.DecodeFromJson (json));
+			}
+		}
+
 
 		public static event Action<RCMessage> onReceivedEvent;
 
@@ -325,13 +351,23 @@ namespace RongCloud
 		{
 			Debug.Log ("onGetRemoteHistoryMessagesSuccess : " + json);
 			if (onGetRemoteHistoryMessagesSuccessEvent != null) {
-
-				List<RCMessage> messages = null;
-
+				List<RCMessage> messages = RCUtils.PraseRCMessages (json);
 				onGetRemoteHistoryMessagesSuccessEvent (messages);
 			}
 		}
 
+
+		public static event Action<RCErrorCode> onGetRemoteHistoryMessagesFailedEvent;
+
+		public void onGetRemoteHistoryMessagesFailed (string errorCode)
+		{
+			var val = (RCErrorCode)int.Parse (errorCode);
+			Debug.Log ("onGetRemoteHistoryMessagesFailed : " + val);
+			if (onGetRemoteHistoryMessagesFailedEvent != null) {
+				onGetRemoteHistoryMessagesFailedEvent (val);
+			}
+		
+		}
 
 
 
@@ -380,6 +416,229 @@ namespace RongCloud
 			}
 		}
 
+
+		#region Android Add
+
+		public static event Action onClearMessagesUnreadStatusSuccessEvent;
+		public static event Action<RCErrorCode> onClearMessagesUnreadStatusFailedEvent;
+
+
+
+
+		public void onClearMessagesUnreadStatusSuccess (string empty)
+		{
+			Debug.Log ("onClearMessagesUnreadStatusSuccess");
+			if (onClearMessagesUnreadStatusSuccessEvent != null) {
+				onClearMessagesUnreadStatusSuccessEvent ();
+			}
+		}
+
+		public void onClearMessagesUnreadStatusFailed (string errorCode)
+		{
+			var val = (RCErrorCode)int.Parse (errorCode);
+			Debug.Log ("onClearMessagesUnreadStatusFailed : " + val);
+			if (onClearMessagesUnreadStatusFailedEvent != null) {
+				onClearMessagesUnreadStatusFailedEvent (val);
+			}
+		}
+
+		public static event Action<bool> onDeleteMessagesSuccessEvent;
+		public static event Action<RCErrorCode> onDeleteMessagesFailedEvent;
+
+
+
+		public void onDeleteMessagesSuccess (string status)
+		{
+			Debug.Log ("onDeleteMessagesSuccess : " + status);
+			if (onDeleteMessagesSuccessEvent != null) {
+				onDeleteMessagesSuccessEvent (bool.Parse (status));
+			}
+		}
+
+		public void onDeleteMessagesFailed (string errorCode)
+		{
+			var val = (RCErrorCode)int.Parse (errorCode);
+			Debug.Log ("onDeleteMessagesFailed : " + val);
+			if (onDeleteMessagesFailedEvent != null) {
+				onDeleteMessagesFailedEvent (val);
+			}
+		}
+
+
+
+
+		public static event Action<string,int> onGetNotificationQuietHoursSuccessEvent;
+		public static event Action<RCErrorCode> onGetNotificationQuietHoursFailedEvent;
+
+
+
+		public void onGetNotificationQuietHoursSuccess (string json)
+		{
+			Debug.Log ("onGetNotificationQuietHoursSuccess : " + json);
+			if (onGetNotificationQuietHoursSuccessEvent != null) {
+				Dictionary<string,object> dict = MiniJSON.Json.Deserialize (json) as Dictionary<string,object>;
+				onGetNotificationQuietHoursSuccessEvent (dict ["startTime"].ToString (), int.Parse (dict ["spanMinutes"].ToString ()));
+			}
+		}
+
+		public void onGetNotificationQuietHoursFailed (string errorCode)
+		{
+			var val = (RCErrorCode)int.Parse (errorCode);
+			Debug.Log ("onGetNotificationQuietHoursFailed : " + val);
+			if (onGetNotificationQuietHoursFailedEvent != null) {
+				onGetNotificationQuietHoursFailedEvent (val);
+			}
+		}
+
+
+		public static event Action<string> onReConnectSuccessEvent;
+
+		public void onReConnectSuccess (string userId)
+		{
+			Debug.Log ("onReConnectSuccess : " + userId);
+			if (onReConnectSuccessEvent != null) {
+				onReConnectSuccessEvent (userId);
+			}
+		}
+
+		public static event Action<RCConnectErrorCode> onReConnectFailedEvent;
+
+		public void onReConnectFailed (string status)
+		{
+			var errorCode = (RCConnectErrorCode)int.Parse (status);
+			Debug.Log ("onReConnectFailed : " + errorCode);
+			if (onReConnectFailedEvent != null) {
+				onReConnectFailedEvent (errorCode);
+			}
+		}
+
+		public static event Action onReTokenIncorrectEvent;
+
+		public void onReTokenIncorrect (string empty)
+		{
+			Debug.Log ("onReTokenIncorrect");
+			if (onReTokenIncorrectEvent != null) {
+				onReTokenIncorrectEvent ();
+			}
+		}
+
+
+		public static event Action onRemoveNotificationQuietHoursSuccessEvent;
+		public static event Action<RCErrorCode> onRemoveNotificationQuietHoursFailedEvent;
+
+
+		public void onRemoveNotificationQuietHoursSuccess (string empty)
+		{
+			Debug.Log ("onRemoveNotificationQuietHoursSuccess");
+			if (onRemoveNotificationQuietHoursSuccessEvent != null) {
+				onRemoveNotificationQuietHoursSuccessEvent ();
+			}
+		}
+
+
+		public void onRemoveNotificationQuietHoursFailed (string errorCode)
+		{
+			var val = (RCErrorCode)int.Parse (errorCode);
+			Debug.Log ("onRemoveNotificationQuietHoursFailed : " + val);
+			if (onRemoveNotificationQuietHoursFailedEvent != null) {
+				onRemoveNotificationQuietHoursFailedEvent (val);
+			}
+		}
+
+
+
+		public static event Action<bool> onSetMessageReceivedStatusSuccessEvent;
+		public static event Action<bool> onSetMessageSentStatusSuccessEvent;
+
+		public static event Action<RCErrorCode> onSetMessageReceivedStatusFailedEvent;
+		public static event Action<RCErrorCode> onSetMessageSentStatusFailedEvent;
+
+
+		public void onSetMessageReceivedStatusSuccess (string status)
+		{
+			Debug.Log ("onSetMessageReceivedStatusSuccess : " + status);
+			if (onSetMessageReceivedStatusSuccessEvent != null) {
+				onSetMessageReceivedStatusSuccessEvent (bool.Parse (status));
+			}
+		}
+
+
+		public void onSetMessageSentStatusSuccess (string status)
+		{
+			Debug.Log ("onSetMessageSentStatusSuccess : " + status);
+			if (onSetMessageSentStatusSuccessEvent != null) {
+				onSetMessageSentStatusSuccessEvent (bool.Parse (status));
+			}
+		}
+
+
+
+
+		public void onSetMessageReceivedStatusFailed (string errorCode)
+		{
+			var val = (RCErrorCode)int.Parse (errorCode);
+			Debug.Log ("onSetMessageReceivedStatusFailed : " + val);
+			if (onSetMessageReceivedStatusFailedEvent != null) {
+				onSetMessageReceivedStatusFailedEvent (val);
+			}
+		}
+
+
+		public void onSetMessageSentStatusFailed (string errorCode)
+		{
+			var val = (RCErrorCode)int.Parse (errorCode);
+			Debug.Log ("onSetMessageSentStatusFailed : " + val);
+			if (onSetMessageSentStatusFailedEvent != null) {
+				onSetMessageSentStatusFailedEvent (val);
+			}
+		}
+
+		public static event Action onSetNotificationQuietHoursSuccessEvent;
+		public static event Action<RCErrorCode> onSetNotificationQuietHoursFailedEvent;
+
+
+
+
+		public void onSetNotificationQuietHoursSuccess (string empty)
+		{
+			Debug.Log ("onSetNotificationQuietHoursSuccess");
+			if (onSetNotificationQuietHoursSuccessEvent != null) {
+				onSetNotificationQuietHoursSuccessEvent ();
+			}
+		}
+
+
+		public void onSetNotificationQuietHoursFailed (string errorCode)
+		{
+			var val = (RCErrorCode)int.Parse (errorCode);
+			Debug.Log ("onSetNotificationQuietHoursFailed : " + val);
+			if (onSetNotificationQuietHoursFailedEvent != null) {
+				onSetNotificationQuietHoursFailedEvent (val);
+			}
+		}
+
+
+		public static event Action<bool> onClearMessagesSuccessEvent;
+		public static event Action<RCErrorCode> onClearMessagesFailedEvent;
+
+		public void onClearMessagesSuccess (string status)
+		{
+			Debug.Log ("onClearMessagesSuccess : " + status);
+			if (onClearMessagesSuccessEvent != null) {
+				onClearMessagesSuccessEvent (bool.Parse (status));
+			}
+		}
+
+		public void onClearMessagesFailed (string errorCode)
+		{
+			var val = (RCErrorCode)int.Parse (errorCode);
+			Debug.Log ("onClearMessagesFailed : " + val);
+			if (onClearMessagesFailedEvent != null) {
+				onClearMessagesFailedEvent (val);
+			}
+		}
+
+		#endregion
 
 	}
 }

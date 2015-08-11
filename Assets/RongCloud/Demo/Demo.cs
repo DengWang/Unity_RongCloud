@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using RongCloud;
 using System;
+
 public class Demo : MonoBehaviour
 {
 
@@ -19,34 +20,26 @@ public class Demo : MonoBehaviour
 	// Use this for initialization
 	void Start ()
 	{
-		
-		#if UNITY_IPHONE
 		RongCloudBinding.Init (appKey);
-		NotificationServices.RegisterForRemoteNotificationTypes (RemoteNotificationType.Alert);
 		RongCloudBinding.ConnectWithToken (token);
-		#elif UNITY_ANDROID
-		RongCloudAndroidBinding.Init();
-		RongCloudAndroidBinding.ConnectWithToken(token);
+
+		#if UNITY_IPHONE
+		NotificationServices.RegisterForRemoteNotificationTypes (RemoteNotificationType.Alert);
 		#endif
+
 	}
 
 	void onConnectSuccessEvent (string userId)
 	{
-//		Debug.Log ("JoinGroup");
-//		RCGroup group1 = new RCGroup ("1", "TestGroup", "");
-//		RCGroup group2 = new RCGroup ("2", "TestGroup2", "");
-//		RCGroup group3 = new RCGroup ("3", "TestGroup3", "");
-//
-//		RongCloudBinding.SyncGroups (new List<RCGroup> (){ group1, group2, group3 });
-//
-//
-//
-//
-//
-//		RongCloudBinding.GetConversationNotificationStatus (RCConversationType.ConversationType_GROUP, "1");
-//		RongCloudBinding.GetConversationNotificationStatus (RCConversationType.ConversationType_PRIVATE, "2");
-//
-//		RongCloudBinding.SetConversationNotificationStatus (RCConversationType.ConversationType_GROUP, "1", false);
+		Debug.Log ("JoinGroup");
+		RCGroup group1 = new RCGroup ("1", "TestGroup", "");
+		RCGroup group2 = new RCGroup ("2", "TestGroup2", "");
+		RCGroup group3 = new RCGroup ("3", "TestGroup3", "");
+
+		RongCloudBinding.SyncGroups (new List<RCGroup> (){ group1, group2, group3 });
+
+		RongCloudBinding.GetConversationNotificationStatus (RCConversationType.ConversationType_GROUP, "1");
+		RongCloudBinding.GetConversationNotificationStatus (RCConversationType.ConversationType_PRIVATE, "2");
 	}
 
 	#if UNITY_IPHONE
@@ -70,23 +63,15 @@ public class Demo : MonoBehaviour
 	void OnGUI ()
 	{
 		if (GUI.Button (new Rect (50, 50, 150, 50), "SendMessageToUser")) {
-			#if UNITY_IPHONE
-			RongCloudBinding.SendTextMessage (RCConversationType.ConversationType_PRIVATE, "1", "nihao" + Time.realtimeSinceStartup, Time.realtimeSinceStartup.ToString (), "");
-			#elif UNITY_ANDROID
-			RongCloudAndroidBinding.SendTextMessage (RCConversationType.ConversationType_PRIVATE, "1", "nihao" + Time.realtimeSinceStartup, Time.realtimeSinceStartup.ToString (), "", "");
-			#endif
+			RongCloudBinding.SendTextMessage (RCConversationType.ConversationType_PRIVATE, "1", "nihao" + Time.realtimeSinceStartup, Time.realtimeSinceStartup.ToString (), "", "");
 		}
 
 		if (GUI.Button (new Rect (350, 50, 150, 50), "SendMessageToGroup")) {
-			#if UNITY_IPHONE
-			RongCloudBinding.SendTextMessage (RCConversationType.ConversationType_GROUP, "1", "nihao" + Time.realtimeSinceStartup, Time.realtimeSinceStartup.ToString (), "");
-			#elif UNITY_ANDROID
-			RongCloudAndroidBinding.SendTextMessage (RCConversationType.ConversationType_GROUP, "1", "nihao" + Time.realtimeSinceStartup, Time.realtimeSinceStartup.ToString (), "", "");
-			#endif
+			RongCloudBinding.SendTextMessage (RCConversationType.ConversationType_GROUP, "1", "nihao" + Time.realtimeSinceStartup, Time.realtimeSinceStartup.ToString (), "", "");
+
 		}
 
 
-		#if UNITY_IPHONE
 
 		if (GUI.Button (new Rect (50, 150, 150, 50), "GetRemoteHistoryMessagesForUser")) {
 			long recodeTime = (long)(System.DateTime.Now - new DateTime (1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc)).TotalMilliseconds;
@@ -118,7 +103,7 @@ public class Demo : MonoBehaviour
 
 		if (GUI.Button (new Rect (50, 450, 150, 50), "GetUnreadCount")) {
 			Debug.Log ("GetUnreadCount");
-			Debug.Log (RongCloudBinding.GetUnreadCount (new List<RCConversationType> (){ RCConversationType.ConversationType_GROUP }));
+			Debug.Log (RongCloudBinding.GetUnreadCount (RCConversationType.ConversationType_GROUP, "1"));
 
 		}
 
@@ -144,7 +129,6 @@ public class Demo : MonoBehaviour
 
 		}
 
-		#endif
 
 	}
 
