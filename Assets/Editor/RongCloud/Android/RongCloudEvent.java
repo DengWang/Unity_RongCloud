@@ -32,7 +32,7 @@ public final class RongCloudEvent implements
 		RongIMClient.ConnectionStatusListener
 		{
 
-	private static final String TAG = RongCloudEvent.class.getSimpleName();
+	private static final String TAG = "Unity";
 
 	private static RongCloudEvent mRongCloudInstance;
 
@@ -103,41 +103,38 @@ public final class RongCloudEvent implements
 	 */
 	@Override
 	public boolean onReceived(Message message, int left) {
-
-		MessageContent messageContent = message.getContent();
-		
-		if (messageContent instanceof TextMessage) {// 文本消息
-			TextMessage textMessage = (TextMessage) messageContent;
-			Log.d(TAG, "onReceived-TextMessage:" + textMessage.getContent());
-		} else if (messageContent instanceof ImageMessage) {// 图片消息
-			ImageMessage imageMessage = (ImageMessage) messageContent;
-			Log.d(TAG, "onReceived-ImageMessage:" + imageMessage.getRemoteUri());
-		} else if (messageContent instanceof VoiceMessage) {// 语音消息
-			VoiceMessage voiceMessage = (VoiceMessage) messageContent;
-			Log.d(TAG, "onReceived-voiceMessage:"
-					+ voiceMessage.getUri().toString());
-		} else if (messageContent instanceof RichContentMessage) {// 图文消息
-			RichContentMessage richContentMessage = (RichContentMessage) messageContent;
-			Log.d(TAG,
-					"onReceived-RichContentMessage:"
-							+ richContentMessage.getContent());
-		} else if (messageContent instanceof InformationNotificationMessage) {// 小灰条消息
-			InformationNotificationMessage informationNotificationMessage = (InformationNotificationMessage) messageContent;
-			Log.d(TAG, "onReceived-informationNotificationMessage:"
-					+ informationNotificationMessage.getMessage());
-			
-		}  else if (messageContent instanceof ContactNotificationMessage) {// 好友添加消息
-			ContactNotificationMessage contactContentMessage = (ContactNotificationMessage) messageContent;
-			Log.d(TAG, "onReceived-ContactNotificationMessage:getExtra;"
-					+ contactContentMessage.getExtra());
-			Log.d(TAG, "onReceived-ContactNotificationMessage:+getmessage:"
-					+ contactContentMessage.getMessage().toString());
-		} else {
-			Log.d(TAG, "onReceived-其他消息，自己来判断处理");
-		}
-		
-		
-		RongCloudPlugin.instance().UnitySendMessage("onReceived", "");
+//		MessageContent messageContent = message.getContent();
+//		
+//		if (messageContent instanceof TextMessage) {// 文本消息
+//			TextMessage textMessage = (TextMessage) messageContent;
+//			Log.d(TAG, "onReceived-TextMessage:" + textMessage.getContent());
+//		} else if (messageContent instanceof ImageMessage) {// 图片消息
+//			ImageMessage imageMessage = (ImageMessage) messageContent;
+//			Log.d(TAG, "onReceived-ImageMessage:" + imageMessage.getRemoteUri());
+//		} else if (messageContent instanceof VoiceMessage) {// 语音消息
+//			VoiceMessage voiceMessage = (VoiceMessage) messageContent;
+//			Log.d(TAG, "onReceived-voiceMessage:"
+//					+ voiceMessage.getUri().toString());
+//		} else if (messageContent instanceof RichContentMessage) {// 图文消息
+//			RichContentMessage richContentMessage = (RichContentMessage) messageContent;
+//			Log.d(TAG,
+//					"onReceived-RichContentMessage:"
+//							+ richContentMessage.getContent());
+//		} else if (messageContent instanceof InformationNotificationMessage) {// 小灰条消息
+//			InformationNotificationMessage informationNotificationMessage = (InformationNotificationMessage) messageContent;
+//			Log.d(TAG, "onReceived-informationNotificationMessage:"
+//					+ informationNotificationMessage.getMessage());
+//			
+//		}  else if (messageContent instanceof ContactNotificationMessage) {// 好友添加消息
+//			ContactNotificationMessage contactContentMessage = (ContactNotificationMessage) messageContent;
+//			Log.d(TAG, "onReceived-ContactNotificationMessage:getExtra;"
+//					+ contactContentMessage.getExtra());
+//			Log.d(TAG, "onReceived-ContactNotificationMessage:+getmessage:"
+//					+ contactContentMessage.getMessage().toString());
+//		} else {
+//			Log.d(TAG, "onReceived-其他消息，自己来判断处理");
+//		}
+		RongCloudPlugin.instance().UnitySendMessage("onReceived", JsonHelper.MessagetoJSON(message));
 		return false;
 
 	}

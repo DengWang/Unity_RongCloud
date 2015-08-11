@@ -19,36 +19,34 @@ public class Demo : MonoBehaviour
 	// Use this for initialization
 	void Start ()
 	{
-		RongCloudBinding.Init (appKey);
+		
 		#if UNITY_IPHONE
+		RongCloudBinding.Init (appKey);
 		NotificationServices.RegisterForRemoteNotificationTypes (RemoteNotificationType.Alert);
-		#endif
 		RongCloudBinding.ConnectWithToken (token);
-
-
-
-
-
-
+		#elif UNITY_ANDROID
+		RongCloudAndroidBinding.Init();
+		RongCloudAndroidBinding.ConnectWithToken(token);
+		#endif
 	}
 
 	void onConnectSuccessEvent (string userId)
 	{
-		Debug.Log ("JoinGroup");
-		RCGroup group1 = new RCGroup ("1", "TestGroup", "");
-		RCGroup group2 = new RCGroup ("2", "TestGroup2", "");
-		RCGroup group3 = new RCGroup ("3", "TestGroup3", "");
-
-		RongCloudBinding.SyncGroups (new List<RCGroup> (){ group1, group2, group3 });
-
-
-
-
-
-		RongCloudBinding.GetConversationNotificationStatus (RCConversationType.ConversationType_GROUP, "1");
-		RongCloudBinding.GetConversationNotificationStatus (RCConversationType.ConversationType_PRIVATE, "2");
-
-		RongCloudBinding.SetConversationNotificationStatus (RCConversationType.ConversationType_GROUP, "1", false);
+//		Debug.Log ("JoinGroup");
+//		RCGroup group1 = new RCGroup ("1", "TestGroup", "");
+//		RCGroup group2 = new RCGroup ("2", "TestGroup2", "");
+//		RCGroup group3 = new RCGroup ("3", "TestGroup3", "");
+//
+//		RongCloudBinding.SyncGroups (new List<RCGroup> (){ group1, group2, group3 });
+//
+//
+//
+//
+//
+//		RongCloudBinding.GetConversationNotificationStatus (RCConversationType.ConversationType_GROUP, "1");
+//		RongCloudBinding.GetConversationNotificationStatus (RCConversationType.ConversationType_PRIVATE, "2");
+//
+//		RongCloudBinding.SetConversationNotificationStatus (RCConversationType.ConversationType_GROUP, "1", false);
 	}
 
 	#if UNITY_IPHONE
@@ -72,12 +70,23 @@ public class Demo : MonoBehaviour
 	void OnGUI ()
 	{
 		if (GUI.Button (new Rect (50, 50, 150, 50), "SendMessageToUser")) {
+			#if UNITY_IPHONE
 			RongCloudBinding.SendTextMessage (RCConversationType.ConversationType_PRIVATE, "1", "nihao" + Time.realtimeSinceStartup, Time.realtimeSinceStartup.ToString (), "");
+			#elif UNITY_ANDROID
+			RongCloudAndroidBinding.SendTextMessage (RCConversationType.ConversationType_PRIVATE, "1", "nihao" + Time.realtimeSinceStartup, Time.realtimeSinceStartup.ToString (), "", "");
+			#endif
 		}
 
 		if (GUI.Button (new Rect (350, 50, 150, 50), "SendMessageToGroup")) {
+			#if UNITY_IPHONE
 			RongCloudBinding.SendTextMessage (RCConversationType.ConversationType_GROUP, "1", "nihao" + Time.realtimeSinceStartup, Time.realtimeSinceStartup.ToString (), "");
+			#elif UNITY_ANDROID
+			RongCloudAndroidBinding.SendTextMessage (RCConversationType.ConversationType_GROUP, "1", "nihao" + Time.realtimeSinceStartup, Time.realtimeSinceStartup.ToString (), "", "");
+			#endif
 		}
+
+
+		#if UNITY_IPHONE
 
 		if (GUI.Button (new Rect (50, 150, 150, 50), "GetRemoteHistoryMessagesForUser")) {
 			long recodeTime = (long)(System.DateTime.Now - new DateTime (1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc)).TotalMilliseconds;
@@ -134,6 +143,8 @@ public class Demo : MonoBehaviour
 			RongCloudBinding.SyncGroups (new List<RCGroup> (){ group1, group2, group3 });
 
 		}
+
+		#endif
 
 	}
 

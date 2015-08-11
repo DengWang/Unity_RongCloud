@@ -7,14 +7,10 @@ import android.widget.Toast;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.util.HashMap;
-import java.util.Iterator;
-import org.json.JSONException;
-import org.json.JSONObject;
 
 public class RongCloudPluginBase {
-	protected static String TAG = "Prime31";
-	protected static final String MANAGER_NAME = "RongCloudManager";
+	protected static String TAG = "Unity";
+	protected static final String MANAGER_NAME = "RongCloudAndroidManager";
 	protected static RongCloudPlugin _instance;
 	protected Class<?> _unityPlayerClass;
 	protected Field _unityPlayerActivityField;
@@ -86,7 +82,7 @@ public class RongCloudPluginBase {
 		if (this._unitySendMessageMethod != null) {
 			try {
 				this._unitySendMessageMethod.invoke(null, new Object[] {
-						"EtceteraAndroidManager", m, p });
+						MANAGER_NAME, m, p });
 			} catch (IllegalArgumentException e) {
 				Log.i(TAG,
 						"could not find UnitySendMessage method: "
@@ -102,57 +98,8 @@ public class RongCloudPluginBase {
 			}
 		} else {
 			Toast.makeText(getActivity(), "UnitySendMessage:\n" + m + "\n" + p,
-					1).show();
-			Log.i(TAG, "UnitySendMessage: EtceteraAndroidManager, " + m + ", "
-					+ p);
+					Toast.LENGTH_LONG).show();
+			Log.i(TAG, "UnitySendMessage: MANAGER_NAME, " + m + ", " + p);
 		}
 	}
-
-	
-	
-	
-//	protected HashMap<String, Object> fromJSON(String json) {
-//		if ((json == null) || (json.length() == 0)) {
-//			return null;
-//		}
-//
-//		HashMap map = new HashMap();
-//		JSONObject jObject;
-//		try {
-//			jObject = new JSONObject(json);
-//		} catch (JSONException e) {
-//			Log.i("Prime31", "failed to parse userInfoJSON: " + e.getMessage());
-//			return null;
-//		}
-//		JSONObject jObject;
-//		Iterator iter = jObject.keys();
-//		while (iter.hasNext()) {
-//			String key = (String) iter.next();
-//			try {
-//				String value = jObject.getString(key);
-//				map.put(key, value);
-//			} catch (JSONException e) {
-//				Log.i("Prime31",
-//						"failed to extract userInfo paramter for key: " + key
-//								+ ", error: " + e.getMessage());
-//			}
-//		}
-//
-//		return map;
-//	}
 }
-
-
-
-
-
-
-
-	
-
-	
-	
-
-	
-
-	
