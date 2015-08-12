@@ -8,6 +8,13 @@ namespace RongCloud
 	public class RongCloudManager : MonoBehaviour
 	{
 
+
+        void Awake () {
+			DontDestroyOnLoad (this);
+			gameObject.name = this.GetType ().Name;
+        }
+
+
 		public static event Action<string> onConnectSuccessEvent;
 
 		public void onConnectSuccess (string userId)

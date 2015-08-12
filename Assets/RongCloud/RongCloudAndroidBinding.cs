@@ -33,9 +33,9 @@ namespace RongCloud
 
 		public static void Init (string appKey)
 		{
-			if (Application.platform == RuntimePlatform.Android) {
-				_plugin.Call ("_init");
-			}
+//			if (Application.platform == RuntimePlatform.Android) {
+//				_plugin.Call ("_init");
+//			}
 
 		}
 

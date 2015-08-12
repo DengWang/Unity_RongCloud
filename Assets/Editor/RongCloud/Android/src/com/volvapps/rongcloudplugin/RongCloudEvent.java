@@ -3,14 +3,16 @@ package com.volvapps.rongcloudplugin;
 import android.util.Log;
 import io.rong.imlib.RongIMClient;
 import io.rong.imlib.model.Message;
+import io.rong.notification.PushNotificationMessage;
 
 
 public final class RongCloudEvent implements
 		RongIMClient.OnReceiveMessageListener,
-		RongIMClient.ConnectionStatusListener
+		RongIMClient.ConnectionStatusListener,
+		RongIMClient.OnReceivePushMessageListener
 		{
 
-	private static final String TAG = "Unity";
+	
 
 	private static RongCloudEvent mRongCloudInstance;
 
@@ -78,7 +80,7 @@ public final class RongCloudEvent implements
 	 */
 	@Override
 	public boolean onReceived(Message message, int left) {
-		Log.d(TAG, "onChanged:" + message);
+		Log.d(App.TAG, "onReceived:" + message);
 		RongCloudPlugin.instance().UnitySendMessage("onReceived", JsonHelper.MessagetoJSON(message));
 		return false;
 
@@ -92,7 +94,13 @@ public final class RongCloudEvent implements
 	 */
 	@Override
 	public void onChanged(ConnectionStatus status) {
-		Log.d(TAG, "onChanged:" + status);
+		Log.d(App.TAG, "onChanged:" + status);
 		RongCloudPlugin.instance().UnitySendMessage("onConnectionStatusChanged", String.valueOf(status.getValue()));
+	}
+
+	@Override
+	public boolean onReceivePushMessage(PushNotificationMessage arg0) {
+		Log.d(App.TAG, "onReceivePushMessage:" + arg0);
+		return false;
 	}
 }

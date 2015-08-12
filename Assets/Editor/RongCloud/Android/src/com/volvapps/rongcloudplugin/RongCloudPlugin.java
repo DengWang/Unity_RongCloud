@@ -19,10 +19,10 @@ import io.rong.message.TextMessage;
 
 public class RongCloudPlugin extends RongCloudPluginBase {
 
-	public void _init() {
-		RongIMClient.init(getActivity());
-		RongCloudEvent.init();
-	}
+//	public void _init() {
+//		RongIMClient.init(getActivity());
+//		RongCloudEvent.init();
+//	}
 
 	public void _connectWithToken(String token) {
 		RongIMClient.connect(token, new RongIMClient.ConnectCallback() {
@@ -138,7 +138,7 @@ public class RongCloudPlugin extends RongCloudPluginBase {
 						}
 					});
 		} catch (JSONException e) {
-			Log.i(TAG, "failed to parse MessageIdJSON: " + e.getMessage());
+			Log.i(App.TAG, "failed to parse MessageIdJSON: " + e.getMessage());
 
 		}
 	}
@@ -240,7 +240,13 @@ public class RongCloudPlugin extends RongCloudPluginBase {
 		List<Message> messages = RongIMClient.getInstance().getHistoryMessages(
 				Conversation.ConversationType.setValue(conversationType),
 				targetId, oldestMessageId, count);
-		return JsonHelper.MessagesToJSON(messages);
+		if(messages == null){
+			Log.i(App.TAG,"messages is null");
+			return "[]";
+		}else{
+			return JsonHelper.MessagesToJSON(messages);
+		}
+		
 	}
 
 	public String _getLatestMessages(int conversationType, String targetId,
@@ -248,7 +254,12 @@ public class RongCloudPlugin extends RongCloudPluginBase {
 		List<Message> messages = RongIMClient.getInstance().getLatestMessages(
 				Conversation.ConversationType.setValue(conversationType),
 				targetId, count);
-		return JsonHelper.MessagesToJSON(messages);
+		if(messages == null){
+			Log.i(App.TAG,"messages is null");
+			return "[]";
+		}else{
+			return JsonHelper.MessagesToJSON(messages);
+		}
 	}
 
 	public void _getNotificationQuietHours() {

@@ -3,7 +3,7 @@ package com.volvapps.rongcloudplugin;
 import io.rong.imlib.model.Group;
 import io.rong.imlib.model.Message;
 import io.rong.imlib.model.MessageContent;
-import io.rong.message.TextMessage;
+import io.rong.message.*;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -31,7 +31,7 @@ public class JsonHelper {
 		try {
 			jsonArray = new JSONArray(json);
 		} catch (JSONException e) {
-			Log.i(TAG, "failed to parse GroupsJSON: " + e.getMessage());
+			Log.i(App.TAG, "failed to parse GroupsJSON: " + e.getMessage());
 			return null;
 		}
 
@@ -45,7 +45,7 @@ public class JsonHelper {
 								.getString("portraitUri")));
 				groups.add(group);
 			} catch (JSONException e) {
-				Log.i(TAG, "failed to parse GroupsJSON: " + e.getMessage());
+				Log.i(App.TAG, "failed to parse GroupsJSON: " + e.getMessage());
 				return null;
 			}
 
@@ -107,8 +107,8 @@ public class JsonHelper {
 
 		MessageContent messageContent = message.getContent();
 		HashMap<String, Object> contentMap = null;
-
-		if (messageContent instanceof TextMessage) {// 文本消息
+		Log.i(App.TAG, message.getObjectName());
+		if (message.getObjectName() == "RC:TxtMsg") {// 文本消息
 			TextMessage textMessage = (TextMessage) messageContent;
 			contentMap = new HashMap<String, Object>();
 			contentMap.put("content", textMessage.getContent());
