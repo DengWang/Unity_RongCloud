@@ -74,9 +74,9 @@ public class Demo : MonoBehaviour
 		if (GUI.Button (new Rect (50, 50, 150, 50), "SendMessageToUser")) {
 
 			if (manager.currentUserId == "1") {
-				RongCloudBinding.SendTextMessage (RCConversationType.ConversationType_PRIVATE, "2", "nihao" + Time.realtimeSinceStartup, Time.realtimeSinceStartup.ToString (), "", "");	
+				RongCloudBinding.SendTextMessage (RCConversationType.ConversationType_PRIVATE, "2", "nihao" + Time.realtimeSinceStartup, Time.realtimeSinceStartup.ToString (), "nihao" + Time.realtimeSinceStartup,"nihao" + Time.realtimeSinceStartup);	
 			} else {
-				RongCloudBinding.SendTextMessage (RCConversationType.ConversationType_PRIVATE, "1", "nihao" + Time.realtimeSinceStartup, Time.realtimeSinceStartup.ToString (), "", "");
+				RongCloudBinding.SendTextMessage (RCConversationType.ConversationType_PRIVATE, "1", "nihao" + Time.realtimeSinceStartup, Time.realtimeSinceStartup.ToString (), "nihao" + Time.realtimeSinceStartup,  "nihao" + Time.realtimeSinceStartup);
 			}
 		}
 

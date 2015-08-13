@@ -49,15 +49,17 @@ public final class RongCloudEvent implements
 	 * RongIM.init(this) 后直接可注册的Listener。
 	 */
 	private void initDefaultListener() {
-
+		RongIMClient.setOnReceivePushMessageListener(this);
+		RongIMClient.setOnReceiveMessageListener(this);// 设置消息接收监听器。
 	}
 
 	/*
 	 * 连接成功注册。 <p/> 在RongIM-connect-onSuccess后调用。
 	 */
 	public void setOtherListener() {
-		RongIMClient.setOnReceiveMessageListener(this);// 设置消息接收监听器。
+		
 		RongIMClient.setConnectionStatusListener(this);// 设置连接状态监听器。
+		
 
 	}
 
