@@ -95,11 +95,14 @@ void _sendTextMessage(int conversationType,const char * targetId, const char * c
     rcTextMessage.extra = GetStringParam(extra);
     RCMessage * message  = [[RCIMClient sharedRCIMClient] sendMessage:(RCConversationType)conversationType targetId:GetStringParam(targetId) content:rcTextMessage pushContent:GetStringParam(pushContent) pushData:GetStringParam(pushData) success:^(long messageId){
         UnitySendMessage( RONGCLOUDMANAGER, "onSendTextMessageSuccess", [NSString stringWithFormat:@"%li",messageId].UTF8String);
-        
     } error:^(RCErrorCode nErrorCode,long messageId){
-        UnitySendMessage( RONGCLOUDMANAGER, "onSendTextMessageFailed", [NSString stringWithFormat:@"%i",nErrorCode].UTF8String);
+        NSDictionary * dict = @{@"messageId": @(messageId),@"errorCode":@((int)nErrorCode)};
+        UnitySendMessage( RONGCLOUDMANAGER, "onSendTextMessageFailed", [RongCloudManager jsonFromObject:dict].UTF8String);
+        //        UnitySendMessage(RONGCLOUDMANAGER, "onSendTextMessageResultFailed", [NSString stringWithFormat:@"%i",nErrorCode].UTF8String);
+        
     }];
-    [[RongCloudManager sharedManager ] onReceived:message left:0 object:nil];
+    UnitySendMessage(RONGCLOUDMANAGER, "onSendTextMessageResult", [RongCloudManager RCMessageToJson:message].UTF8String);
+    
 }
 
 
@@ -137,6 +140,11 @@ int _getUnreadCount(int conversationType,const char * targetId){
 
 const char * _getLatestMessages(int conversationType,const char * targetId, int count){
     NSArray * latestMessages = [[RCIMClient sharedRCIMClient] getLatestMessages:(RCConversationType)conversationType targetId:GetStringParam(targetId) count:count];
+    
+    if (latestMessages == nil) {
+        return "[]";
+    }
+    
     NSMutableString *reString = [NSMutableString string];
     [reString appendString:@"["];
     NSMutableArray *values = [NSMutableArray array];
@@ -152,6 +160,9 @@ const char * _getLatestMessages(int conversationType,const char * targetId, int 
 
 const char * _getHistoryMessages(int conversationType,const char * targetId,long oldestMessageId, int count){
     NSArray * historyMessages = [[RCIMClient sharedRCIMClient] getHistoryMessages:(RCConversationType) conversationType targetId:GetStringParam(targetId) oldestMessageId:oldestMessageId count:count];
+    if (historyMessages == nil) {
+        return "[]";
+    }
     NSMutableString *reString = [NSMutableString string];
     [reString appendString:@"["];
     NSMutableArray *values = [NSMutableArray array];

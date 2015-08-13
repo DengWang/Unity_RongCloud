@@ -8,6 +8,8 @@ namespace RongCloud
 
 		public static List<RCMessage> PraseRCMessages (string json)
 		{
+			Debug.Log (json);
+
 			List<object> tempList = MiniJSON.Json.Deserialize (json) as List<object>;
 			List<RCMessage> messages = new List<RCMessage> ();
 			if (tempList != null) {

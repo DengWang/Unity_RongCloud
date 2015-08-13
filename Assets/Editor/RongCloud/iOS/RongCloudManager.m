@@ -70,6 +70,12 @@
                    @"message":msg.message,
                    @"extra":msg.extra == nil ? @"" : msg.extra,
                    };
+    }else if ([message.content isMemberOfClass:[RCInformationNotificationMessage class]]){
+        RCInformationNotificationMessage *msg = (RCInformationNotificationMessage *)message.content;
+        content = @{
+                    @"message":msg.message,
+                    @"extra":msg.extra
+                    };
     }
     NSString * json = [RongCloudManager jsonFromObject:@{
                                                          @"conversationType": [NSString stringWithFormat:@"%i",message.conversationType],

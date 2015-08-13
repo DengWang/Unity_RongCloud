@@ -164,7 +164,6 @@ namespace RongCloud
 		{
 			if (Application.platform == RuntimePlatform.IPhonePlayer) {
 				string json = _getLatestMessages ((int)conversationType, targetId, count);
-				Debug.Log (json);
 				return  RCUtils.PraseRCMessages (json);
 			}
 			return null;

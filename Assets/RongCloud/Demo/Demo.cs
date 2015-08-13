@@ -6,11 +6,16 @@ using System;
 
 public class Demo : MonoBehaviour
 {
+	#if UNITY_IPHONE
+	string token = "z5G1EInN8hTM2BAkCA9FHVuX0L/W2OKmeTvN4IB57Ld228wcoGbTmCVLyy5v6VIQAQ3E1/wg1L0o/CDsOtZj1w==";
+	#elif UNITY_ANDROID
+	string token = "8tHBY+r7m5fozIIoYFjI8noqi9ukpNaQStcltO2Qyr79FUphMYcV16YeZJywhMn4hmMmQ+paVJ5ipNwf7WoZwA==";
+	#endif
 
-
-	public string token = "hWnrG2D1tj3dNRQizCXxiluX0L/W2OKmeTvN4IB57Ld228wcoGbTmBzyqLcR4Gc2xE+tVa8USSAo/CDsOtZj1w==";
 	public string appKey = "kj7swf8o7cvl2";
 
+
+	public RongCloudManager manager;
 
 	void Awake ()
 	{
@@ -62,8 +67,17 @@ public class Demo : MonoBehaviour
 
 	void OnGUI ()
 	{
+
+		GUILayout.Label (manager.currentUserId);
+
+
 		if (GUI.Button (new Rect (50, 50, 150, 50), "SendMessageToUser")) {
-			RongCloudBinding.SendTextMessage (RCConversationType.ConversationType_PRIVATE, "1", "nihao" + Time.realtimeSinceStartup, Time.realtimeSinceStartup.ToString (), "", "");
+
+			if (manager.currentUserId == "1") {
+				RongCloudBinding.SendTextMessage (RCConversationType.ConversationType_PRIVATE, "2", "nihao" + Time.realtimeSinceStartup, Time.realtimeSinceStartup.ToString (), "", "");	
+			} else {
+				RongCloudBinding.SendTextMessage (RCConversationType.ConversationType_PRIVATE, "1", "nihao" + Time.realtimeSinceStartup, Time.realtimeSinceStartup.ToString (), "", "");
+			}
 		}
 
 		if (GUI.Button (new Rect (350, 50, 150, 50), "SendMessageToGroup")) {
@@ -71,21 +85,25 @@ public class Demo : MonoBehaviour
 
 		}
 
+//		if (GUI.Button (new Rect (50, 150, 150, 50), "GetRemoteHistoryMessagesForUser")) {
+//			long recodeTime = (long)(System.DateTime.Now - new DateTime (1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc)).TotalMilliseconds;
+//			RongCloudBinding.GetRemoteHistoryMessages (RCConversationType.ConversationType_PRIVATE, "1", recodeTime, 100);
+//		}
+//
+//		if (GUI.Button (new Rect (350, 150, 150, 50), "GetRemoteHistoryMessagesForGroup")) {
+//			long recodeTime = (long)(System.DateTime.Now - new DateTime (1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc)).TotalMilliseconds;
+//			RongCloudBinding.GetRemoteHistoryMessages (RCConversationType.ConversationType_GROUP, "1", recodeTime, 100);
+//		}
 
 
-		if (GUI.Button (new Rect (50, 150, 150, 50), "GetRemoteHistoryMessagesForUser")) {
-			long recodeTime = (long)(System.DateTime.Now - new DateTime (1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc)).TotalMilliseconds;
-			RongCloudBinding.GetRemoteHistoryMessages (RCConversationType.ConversationType_PRIVATE, "1", recodeTime, 100);
+
+		if (GUI.Button (new Rect (50, 250, 150, 50), "GetLastMessageForUser")) {
+			Debug.Log (RongCloudBinding.GetLatestMessages (RCConversationType.ConversationType_PRIVATE, "1", 20));
 		}
 
-		if (GUI.Button (new Rect (350, 150, 150, 50), "GetRemoteHistoryMessagesForGroup")) {
-			long recodeTime = (long)(System.DateTime.Now - new DateTime (1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc)).TotalMilliseconds;
-			RongCloudBinding.GetRemoteHistoryMessages (RCConversationType.ConversationType_GROUP, "1", recodeTime, 100);
-		}
 
 
-
-		if (GUI.Button (new Rect (50, 250, 150, 50), "GetLastMessage")) {
+		if (GUI.Button (new Rect (350, 250, 150, 50), "GetLastMessageForGroup")) {
 			Debug.Log (RongCloudBinding.GetLatestMessages (RCConversationType.ConversationType_GROUP, "1", 20));
 		}
 

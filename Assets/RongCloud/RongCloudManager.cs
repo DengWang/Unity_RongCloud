@@ -8,17 +8,24 @@ namespace RongCloud
 	public class RongCloudManager : MonoBehaviour
 	{
 
+		public string currentUserId {
+			get;
+			set;
+		}
 
-        void Awake () {
+
+		void Awake ()
+		{
 			DontDestroyOnLoad (this);
 			gameObject.name = this.GetType ().Name;
-        }
+		}
 
 
 		public static event Action<string> onConnectSuccessEvent;
 
 		public void onConnectSuccess (string userId)
 		{
+			currentUserId = userId;
 			Debug.Log ("connectSuccess : " + userId);
 			if (onConnectSuccessEvent != null) {
 				onConnectSuccessEvent (userId);
@@ -57,49 +64,64 @@ namespace RongCloud
 			}
 		}
 
-		public static event Action<string> onSendTextMessageSuccessEvent;
-		public static event Action<RCErrorCode> onSendTextMessageFailedEvent;
+		public static event Action<long> onSendTextMessageSuccessEvent;
+		public static event Action<RCMessage> onSentEvent;
+		public static event Action<long,RCErrorCode> onSendTextMessageFailedEvent;
 
 
-		public void onSendTextMessageSuccess (string messageId)
+		public void onSendTextMessageSuccess (string messageIdStr)
 		{
-			Debug.Log ("onSendTextMessageSuccess : " + messageId);
+			Debug.Log ("onSendTextMessageSuccess : " + messageIdStr);
+			long messageId = long.Parse (messageIdStr);
+			if (MessagesPool.MessageSendPool.ContainsKey (messageId)) {
+				MessagesPool.MessageSendPool [messageId].sentStatus = RCSentStatus.SentStatus_SENT;
+				onSentEvent (MessagesPool.MessageSendPool [messageId]);
+			}
 			if (onSendTextMessageSuccessEvent != null) {
 				onSendTextMessageSuccessEvent (messageId);
 			}
 		}
 
 
-
-		public void onSendTextMessageFailed (string status)
+		public void onSendTextMessageFailed (string json)
 		{
-			var val = (RCErrorCode)int.Parse (status);
-			Debug.Log ("onSendTextMessageFailed : " + val);
+			
+			Debug.Log ("onSendTextMessageFailed : " + json);
+
+			Dictionary<string,object> dict = MiniJSON.Json.Deserialize (json) as Dictionary<string,object>;
+			long messageId = long.Parse (dict ["messageId"].ToString ());
+			RCErrorCode errorCode = (RCErrorCode)int.Parse (dict ["errorCode"].ToString ());
+			if (MessagesPool.MessageSendPool.ContainsKey (messageId)) {
+				MessagesPool.MessageSendPool [messageId].sentStatus = RCSentStatus.SentStatus_FAILED;
+			}
 			if (onSendTextMessageFailedEvent != null) {
-				onSendTextMessageFailedEvent (val);
+				onSendTextMessageFailedEvent (messageId, errorCode);
 			}
 		}
 
+		//		public static event Action<RCErrorCode> onSendTextMessageResultFailedEvent;
 
+		//		public void onSendTextMessageResultFailed (string status)
+		//		{
+		//			var val = (RCErrorCode)int.Parse (status);
+		//			Debug.Log ("onSendTextMessageResultFailed : " + val);
+		//			if (onSendTextMessageResultFailedEvent != null) {
+		//				onSendTextMessageResultFailedEvent (val);
+		//			}
+		//		}
+		//
+		//
 
-		public static event Action<RCErrorCode> onSendTextMessageResultFailedEvent;
-		public static event Action<RCMessage> onSendTextMessageResultSuccessEvent;
+		//发送消息的回调，不管消息有没有成功
+		public static event Action<RCMessage> onSendTextMessageResultEvent;
 
-		public void onSendTextMessageResultFailed (string status)
-		{
-			var val = (RCErrorCode)int.Parse (status);
-			Debug.Log ("onSendTextMessageResultFailed : " + val);
-			if (onSendTextMessageResultFailedEvent != null) {
-				onSendTextMessageResultFailedEvent (val);
-			}
-		}
-
-
-		public void onSendTextMessageResultSuccess (string json)
+		public void onSendTextMessageResult (string json)
 		{
 			Debug.Log ("onSendTextMessageResultSuccess : " + json);
-			if (onSendTextMessageResultSuccessEvent != null) {
-				onSendTextMessageResultSuccessEvent (RCMessage.DecodeFromJson (json));
+			RCMessage message = RCMessage.DecodeFromJson (json);
+			MessagesPool.MessageSendPool.Add (message.messageId, message);
+			if (onSendTextMessageResultEvent != null) {
+				onSendTextMessageResultEvent (message);
 			}
 		}
 

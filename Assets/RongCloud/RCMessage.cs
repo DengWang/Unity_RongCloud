@@ -106,7 +106,7 @@ namespace RongCloud
 		}
 
 
-		public RCMessage (string conversationType, string targetId, string  messageId, string messageDirection, string senderUserId, string receivedStatus, string sentStatus, string receivedTime, string sentTime, string objectName, object content)
+		RCMessage (string conversationType, string targetId, string  messageId, string messageDirection, string senderUserId, string receivedStatus, string sentStatus, string receivedTime, string sentTime, string objectName, object content)
 		{
 			this.conversationType = (RCConversationType)int.Parse (conversationType);
 			this.targetId = targetId;
@@ -124,16 +124,15 @@ namespace RongCloud
 				case "RC:TxtMsg":
 					this.content = new RCTextMessage (dict ["content"].ToString (), dict ["extra"].ToString ());
 					break;
+				case "RC:InfoNtf":
+					this.content = new RCInformationNotificationMessage (dict ["message"].ToString (), dict ["extra"].ToString ());
+					break;
 				}
+
 			} else {
 				this.content = null;
 			}
 		}
-
-
-
-
-
 	}
 
 }
