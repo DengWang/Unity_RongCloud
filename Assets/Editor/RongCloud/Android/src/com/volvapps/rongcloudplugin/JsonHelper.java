@@ -108,12 +108,17 @@ public class JsonHelper {
 		MessageContent messageContent = message.getContent();
 		HashMap<String, Object> contentMap = null;
 		Log.i(App.TAG, message.getObjectName());
-		if (message.getObjectName() == "RC:TxtMsg") {// 文本消息
+		if (messageContent instanceof TextMessage) {// 文本消息
 			TextMessage textMessage = (TextMessage) messageContent;
 			contentMap = new HashMap<String, Object>();
 			contentMap.put("content", textMessage.getContent());
 			contentMap.put("extra", textMessage.getExtra());
 
+		}else if(messageContent instanceof InformationNotificationMessage){
+			InformationNotificationMessage informationNotificationMessage = (InformationNotificationMessage)messageContent;
+			contentMap = new HashMap<String, Object>();
+			contentMap.put("message", informationNotificationMessage.getMessage());
+			contentMap.put("extra", informationNotificationMessage.getExtra());
 		}
 		messageMap.put("content", contentMap == null ? "{}" : contentMap);
 		return new JSONObject(messageMap).toString();

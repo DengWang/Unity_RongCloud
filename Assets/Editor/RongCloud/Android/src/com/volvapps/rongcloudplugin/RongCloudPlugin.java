@@ -19,10 +19,10 @@ import io.rong.message.TextMessage;
 
 public class RongCloudPlugin extends RongCloudPluginBase {
 
-//	public void _init() {
-//		RongIMClient.init(getActivity());
-//		RongCloudEvent.init();
-//	}
+	// public void _init() {
+	// RongIMClient.init(getActivity());
+	// RongCloudEvent.init();
+	// }
 
 	public void _connectWithToken(String token) {
 		RongIMClient.connect(token, new RongIMClient.ConnectCallback() {
@@ -240,13 +240,13 @@ public class RongCloudPlugin extends RongCloudPluginBase {
 		List<Message> messages = RongIMClient.getInstance().getHistoryMessages(
 				Conversation.ConversationType.setValue(conversationType),
 				targetId, oldestMessageId, count);
-		if(messages == null){
-			Log.i(App.TAG,"messages is null");
+		if (messages == null) {
+			Log.i(App.TAG, "messages is null");
 			return "[]";
-		}else{
+		} else {
 			return JsonHelper.MessagesToJSON(messages);
 		}
-		
+
 	}
 
 	public String _getLatestMessages(int conversationType, String targetId,
@@ -254,10 +254,10 @@ public class RongCloudPlugin extends RongCloudPluginBase {
 		List<Message> messages = RongIMClient.getInstance().getLatestMessages(
 				Conversation.ConversationType.setValue(conversationType),
 				targetId, count);
-		if(messages == null){
-			Log.i(App.TAG,"messages is null");
+		if (messages == null) {
+			Log.i(App.TAG, "messages is null");
 			return "[]";
-		}else{
+		} else {
 			return JsonHelper.MessagesToJSON(messages);
 		}
 	}
@@ -471,8 +471,12 @@ public class RongCloudPlugin extends RongCloudPluginBase {
 					@Override
 					public void onError(Integer messageId,
 							RongIMClient.ErrorCode e) {
+						HashMap<String, Object> map = new HashMap<String, Object>();
+						map.put("messageId", messageId);
+						map.put("errorCode", e.getValue());
+						JSONObject jsonObject = new JSONObject(map);
 						UnitySendMessage("onSendTextMessageFailed",
-								String.valueOf(e.getValue()));
+						jsonObject.toString());
 					}
 
 					@Override
@@ -484,14 +488,14 @@ public class RongCloudPlugin extends RongCloudPluginBase {
 				}, new RongIMClient.ResultCallback<Message>() {
 					@Override
 					public void onError(ErrorCode e) {
-						UnitySendMessage("onSendTextMessageResultFailed",
-								String.valueOf(e.getValue()));
+						// UnitySendMessage("onSendTextMessageResultFailed",
+						// String.valueOf(e.getValue()));
 
 					}
 
 					@Override
 					public void onSuccess(Message message) {
-						UnitySendMessage("onSendTextMessageResultSuccess",
+						UnitySendMessage("onSendTextMessageResult",
 								JsonHelper.MessagetoJSON(message));
 					}
 				});

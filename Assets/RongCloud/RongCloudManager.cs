@@ -75,7 +75,9 @@ namespace RongCloud
 			long messageId = long.Parse (messageIdStr);
 			if (MessagesPool.MessageSendPool.ContainsKey (messageId)) {
 				MessagesPool.MessageSendPool [messageId].sentStatus = RCSentStatus.SentStatus_SENT;
-				onSentEvent (MessagesPool.MessageSendPool [messageId]);
+				if (onSentEvent != null) {
+					onSentEvent (MessagesPool.MessageSendPool [messageId]);
+				}
 			}
 			if (onSendTextMessageSuccessEvent != null) {
 				onSendTextMessageSuccessEvent (messageId);
@@ -117,7 +119,7 @@ namespace RongCloud
 
 		public void onSendTextMessageResult (string json)
 		{
-			Debug.Log ("onSendTextMessageResultSuccess : " + json);
+			Debug.Log ("onSendTextMessageResult : " + json);
 			RCMessage message = RCMessage.DecodeFromJson (json);
 			MessagesPool.MessageSendPool.Add (message.messageId, message);
 			if (onSendTextMessageResultEvent != null) {
