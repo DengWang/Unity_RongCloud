@@ -41,6 +41,13 @@ namespace RongCloud
 			Binding.SendOperationMessage (conversationType, targetId, operatorUserId, operation, data, message, extra, pushContent, pushData);
 		}
 
+
+		public static void SendRequestMessage (RCConversationType conversationType, string targetId, string operatorUserId, string operatorUserAlias, string data, string message, string extra, string pushContent, string pushData)
+		{
+			Binding.SendRequestMessage (conversationType, targetId, operatorUserId, operatorUserAlias, data, message, extra, pushContent, pushData);
+		}
+
+
 		public static void AddToBlacklist (string userId)
 		{
 			Binding.AddToBlacklist (userId);

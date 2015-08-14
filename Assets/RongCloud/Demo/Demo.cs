@@ -77,10 +77,11 @@ public class Demo : MonoBehaviour
 			if (manager.currentUserId == "1") {
 //				RongCloudBinding.SendTextMessage (RCConversationType.ConversationType_PRIVATE, "2", "nihao" + Time.realtimeSinceStartup, Time.realtimeSinceStartup.ToString (), "nihao" + Time.realtimeSinceStartup,"nihao" + Time.realtimeSinceStartup);	
 				RongCloudBinding.SendOperationMessage (RCConversationType.ConversationType_PRIVATE, "2", "1", "Add", "nihao" + Time.realtimeSinceStartup, "Add", "", "", "");
-				
+				RongCloudBinding.SendRequestMessage (RCConversationType.ConversationType_PRIVATE, "2", "1", "antiping", "nihao" + Time.realtimeSinceStartup, "Request", "", "", "");
 			} else {
 //				RongCloudBinding.SendTextMessage (RCConversationType.ConversationType_PRIVATE, "1", "nihao" + Time.realtimeSinceStartup, Time.realtimeSinceStartup.ToString (), "nihao" + Time.realtimeSinceStartup,  "nihao" + Time.realtimeSinceStartup);
 				RongCloudBinding.SendOperationMessage (RCConversationType.ConversationType_PRIVATE, "1", "2", "Kick", "nihao" + Time.realtimeSinceStartup, "Add", "", "", "");
+				RongCloudBinding.SendRequestMessage (RCConversationType.ConversationType_PRIVATE, "1", "2", "antiping2", "nihao" + Time.realtimeSinceStartup, "Request", "", "", "");
 			}
 		}
 

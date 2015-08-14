@@ -4,7 +4,7 @@ using System.Collections;
 namespace RongCloud
 {
 
-	public class CustomOperationMessage : RCMessageContent
+	public class GroupOperationMessage : RCMessageContent
 	{
 
 		public string operatorUserId {
@@ -35,7 +35,7 @@ namespace RongCloud
 
 
 
-		public CustomOperationMessage (string operatorUserId, string operation, string data, string message, string extra)
+		public GroupOperationMessage (string operatorUserId, string operation, string data, string message, string extra)
 		{
 			this.operatorUserId = operatorUserId;
 			this.operation = operation;

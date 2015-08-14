@@ -58,8 +58,11 @@ public class Builder : Editor
 		pbxProj.AddFileToBuild (target, pbxProj.AddFile (Path.Combine (Application.dataPath, "Editor/RongCloud/iOS/RongCloudBinding.m"), "Libraries/RongCloudBinding.m", PBXSourceTree.Absolute));
 		pbxProj.AddFileToBuild (target, pbxProj.AddFile (Path.Combine (Application.dataPath, "Editor/RongCloud/iOS/RongCloudManager.m"), "Libraries/RongCloudManager.m", PBXSourceTree.Absolute));
 		pbxProj.AddFileToBuild (target, pbxProj.AddFile (Path.Combine (Application.dataPath, "Editor/RongCloud/iOS/RongCloudManager.h"), "Libraries/RongCloudManager.h", PBXSourceTree.Absolute));
-		pbxProj.AddFileToBuild (target, pbxProj.AddFile (Path.Combine (Application.dataPath, "Editor/RongCloud/iOS/CustomOperationMessage.h"), "Libraries/CustomOperationMessage.h", PBXSourceTree.Absolute));
-		pbxProj.AddFileToBuild (target, pbxProj.AddFile (Path.Combine (Application.dataPath, "Editor/RongCloud/iOS/CustomOperationMessage.m"), "Libraries/CustomOperationMessage.m", PBXSourceTree.Absolute));
+		pbxProj.AddFileToBuild (target, pbxProj.AddFile (Path.Combine (Application.dataPath, "Editor/RongCloud/iOS/GroupOperationMessage.h"), "Libraries/GroupOperationMessage.h", PBXSourceTree.Absolute));
+		pbxProj.AddFileToBuild (target, pbxProj.AddFile (Path.Combine (Application.dataPath, "Editor/RongCloud/iOS/GroupOperationMessage.m"), "Libraries/GroupOperationMessage.m", PBXSourceTree.Absolute));
+
+		pbxProj.AddFileToBuild (target, pbxProj.AddFile (Path.Combine (Application.dataPath, "Editor/RongCloud/iOS/GroupRequestMessage.h"), "Libraries/GroupRequestMessage.h", PBXSourceTree.Absolute));
+		pbxProj.AddFileToBuild (target, pbxProj.AddFile (Path.Combine (Application.dataPath, "Editor/RongCloud/iOS/GroupRequestMessage.m"), "Libraries/GroupRequestMessage.m", PBXSourceTree.Absolute));
 
 
 

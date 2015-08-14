@@ -1,5 +1,4 @@
 package com.volvapps.message;
-
 import android.os.Parcel;
 import android.text.TextUtils;
 
@@ -14,43 +13,47 @@ import java.io.UnsupportedEncodingException;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-@MessageTag(value = "VOLV:CustomOp", flag = MessageTag.ISCOUNTED
-		| MessageTag.ISPERSISTED)
-public class CustomOperationMessage extends MessageContent {
+@MessageTag(value = "VOLV:GroupReq", flag = MessageTag.ISCOUNTED
+| MessageTag.ISPERSISTED)
+public class GroupRequestMessage extends MessageContent {
+	
 	private String operatorUserId;
-	private String operation;
+	private String operatorUserAlias;
 	private String data;
 	private String message;
 	private String extra;
-
+	
+	
 	/**
 	 * 读取接口，目的是要从Parcel中构造一个实现了Parcelable的类的实例处理。
 	 */
-	public static final Creator<CustomOperationMessage> CREATOR = new Creator<CustomOperationMessage>() {
+	public static final Creator<GroupRequestMessage> CREATOR = new Creator<GroupRequestMessage>() {
 
 		@Override
-		public CustomOperationMessage createFromParcel(Parcel source) {
-			return new CustomOperationMessage(source);
+		public GroupRequestMessage createFromParcel(Parcel source) {
+			return new GroupRequestMessage(source);
 		}
 
 		@Override
-		public CustomOperationMessage[] newArray(int size) {
-			return new CustomOperationMessage[size];
+		public GroupRequestMessage[] newArray(int size) {
+			return new GroupRequestMessage[size];
 		}
 	};
 
 	public int describeContents() {
 		return 0;
 	}
-
+	
+	
 	public void writeToParcel(Parcel dest, int flags) {
 		ParcelUtils.writeToParcel(dest, this.operatorUserId);
-		ParcelUtils.writeToParcel(dest, this.operation);
+		ParcelUtils.writeToParcel(dest, this.operatorUserAlias);
 		ParcelUtils.writeToParcel(dest, this.data);
 		ParcelUtils.writeToParcel(dest, this.message);
 		ParcelUtils.writeToParcel(dest, this.extra);
 	}
-
+	
+	
 	public String getOperatorUserId() {
 		return this.operatorUserId;
 	}
@@ -59,12 +62,12 @@ public class CustomOperationMessage extends MessageContent {
 		this.operatorUserId = operatorUserId;
 	}
 
-	public String getOperation() {
-		return this.operation;
+	public String getOperatorUserAlias() {
+		return this.operatorUserAlias;
 	}
 
-	public void setOperation(String operation) {
-		this.operation = operation;
+	public void setOperatorUserAlias(String operatorUserAlias) {
+		this.operatorUserAlias = operatorUserAlias;
 	}
 
 	public String getData() {
@@ -90,33 +93,35 @@ public class CustomOperationMessage extends MessageContent {
 	public void setExtra(String extra) {
 		this.extra = extra;
 	}
-
-	public CustomOperationMessage(Parcel in) {
+	
+	
+	
+	public GroupRequestMessage(Parcel in) {
 		this.operatorUserId = ParcelUtils.readFromParcel(in);
-		this.operation = ParcelUtils.readFromParcel(in);
+		this.operatorUserAlias = ParcelUtils.readFromParcel(in);
 		this.data = ParcelUtils.readFromParcel(in);
 		this.message = ParcelUtils.readFromParcel(in);
 		this.extra = ParcelUtils.readFromParcel(in);
 	}
 
-	public static CustomOperationMessage obtain(String operatorUserId,
-			String operation, String data, String message) {
-		CustomOperationMessage obj = new CustomOperationMessage();
+	public static GroupRequestMessage obtain(String operatorUserId,
+			String operatorUserAlias, String data, String message) {
+		GroupRequestMessage obj = new GroupRequestMessage();
 		obj.operatorUserId = operatorUserId;
-		obj.operation = operation;
+		obj.operatorUserAlias = operatorUserAlias;
 		obj.data = data;
 		obj.message = message;
 		return obj;
 	}
 
-	private CustomOperationMessage() {
+	private GroupRequestMessage() {
 	}
 
 	public byte[] encode() {
 		JSONObject jsonObj = new JSONObject();
 		try {
 			jsonObj.put("operatorUserId", this.operatorUserId);
-			jsonObj.put("operation", this.operation);
+			jsonObj.put("operatorUserAlias", this.operatorUserAlias);
 
 			if (!(TextUtils.isEmpty(this.data))) {
 				jsonObj.put("data", this.data);
@@ -137,7 +142,7 @@ public class CustomOperationMessage extends MessageContent {
 		return null;
 	}
 
-	public CustomOperationMessage(byte[] data) {
+	public GroupRequestMessage(byte[] data) {
 		String jsonStr = null;
 		try {
 			jsonStr = new String(data, "UTF-8");
@@ -146,7 +151,7 @@ public class CustomOperationMessage extends MessageContent {
 		try {
 			JSONObject jsonObj = new JSONObject(jsonStr);
 			setOperatorUserId(jsonObj.optString("operatorUserId"));
-			setOperation(jsonObj.optString("operation"));
+			setOperatorUserAlias(jsonObj.optString("operatorUserAlias"));
 			setData(jsonObj.optString("data"));
 			setMessage(jsonObj.optString("message"));
 			setExtra(jsonObj.optString("extra"));
@@ -154,5 +159,16 @@ public class CustomOperationMessage extends MessageContent {
 			RLog.e(this, "JSONException", e.getMessage());
 		}
 	}
-
 }
+
+
+
+
+
+
+
+
+
+
+
+

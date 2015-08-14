@@ -8,7 +8,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import com.volvapps.message.CustomOperationMessage;
+import com.volvapps.message.*;
 
 import android.util.Log;
 import io.rong.imlib.RongIMClient;
@@ -17,6 +17,7 @@ import io.rong.imlib.RongIMClient.ErrorCode;
 import io.rong.imlib.model.Conversation;
 import io.rong.imlib.model.Conversation.ConversationNotificationStatus;
 import io.rong.imlib.model.Message;
+import io.rong.imlib.model.MessageContent;
 import io.rong.message.CommandNotificationMessage;
 import io.rong.message.TextMessage;
 
@@ -467,94 +468,42 @@ public class RongCloudPlugin extends RongCloudPluginBase {
 			String content, String extra, String pushContent, String pushData) {
 		TextMessage textMessage = TextMessage.obtain(content);
 		textMessage.setExtra(extra);
-		RongIMClient.getInstance().sendMessage(
-				Conversation.ConversationType.setValue(conversationType),
-				targetId, textMessage, pushContent, pushData,
-				new RongIMClient.SendMessageCallback() {
-					@Override
-					public void onError(Integer messageId,
-							RongIMClient.ErrorCode e) {
-						HashMap<String, Object> map = new HashMap<String, Object>();
-						map.put("messageId", messageId);
-						map.put("errorCode", e.getValue());
-						JSONObject jsonObject = new JSONObject(map);
-						UnitySendMessage("onSendMessageFailed",
-						jsonObject.toString());
-					}
-
-					@Override
-					public void onSuccess(Integer integer) {
-						UnitySendMessage("onSendMessageSuccess",
-								integer.toString());
-
-					}
-				}, new RongIMClient.ResultCallback<Message>() {
-					@Override
-					public void onError(ErrorCode e) {
-						// UnitySendMessage("onSendTextMessageResultFailed",
-						// String.valueOf(e.getValue()));
-
-					}
-
-					@Override
-					public void onSuccess(Message message) {
-						UnitySendMessage("onSendMessageResult",
-								JsonHelper.MessagetoJSON(message));
-					}
-				});
+		Send(conversationType, targetId, textMessage, pushContent, pushData);
 
 	}
-	
+
 	public void _sendCmdMessage(int conversationType, String targetId,
-			String cmdName, String data,String pushContent, String pushData ) {
+			String cmdName, String data, String pushContent, String pushData) {
 		CommandNotificationMessage cmdMessage = CommandNotificationMessage
 				.obtain(cmdName, data);
-		RongIMClient.getInstance().sendMessage(
-				Conversation.ConversationType.setValue(conversationType),
-				targetId, cmdMessage, pushContent, pushData,
-				new RongIMClient.SendMessageCallback() {
-					@Override
-					public void onError(Integer messageId,
-							RongIMClient.ErrorCode e) {
-						HashMap<String, Object> map = new HashMap<String, Object>();
-						map.put("messageId", messageId);
-						map.put("errorCode", e.getValue());
-						JSONObject jsonObject = new JSONObject(map);
-						UnitySendMessage("onSendMessageFailed",
-								jsonObject.toString());
-					}
-
-					@Override
-					public void onSuccess(Integer integer) {
-						UnitySendMessage("onSendMessageSuccess",
-								integer.toString());
-
-					}
-				}, new RongIMClient.ResultCallback<Message>() {
-					@Override
-					public void onError(ErrorCode e) {
-						// UnitySendMessage("onSendTextMessageResultFailed",
-						// String.valueOf(e.getValue()));
-
-					}
-
-					@Override
-					public void onSuccess(Message message) {
-						UnitySendMessage("onSendMessageResult",
-								JsonHelper.MessagetoJSON(message));
-					}
-				});
+		Send(conversationType, targetId, cmdMessage, pushContent, pushData);
 	}
-	
-	
-	
+
 	public void _sendOperationMessage(int conversationType, String targetId,
-			String operatorUserId, String operation,String data, String message, String extra, String pushContent, String pushData ) {
-		CustomOperationMessage customOperationMessage = CustomOperationMessage.obtain(operatorUserId, operation,data,message);
-		customOperationMessage.setExtra(extra);
+			String operatorUserId, String operation, String data,
+			String message, String extra, String pushContent, String pushData) {
+		GroupOperationMessage groupOperationMessage = GroupOperationMessage
+				.obtain(operatorUserId, operation, data, message);
+		groupOperationMessage.setExtra(extra);
+		Send(conversationType, targetId, groupOperationMessage, pushContent,
+				pushData);
+	}
+
+	public void _sendRequestMessage(int conversationType, String targetId,
+			String operatorUserId, String operatorUserAlias, String data,
+			String message, String extra, String pushContent, String pushData) {
+		GroupRequestMessage groupRequestMessage = GroupRequestMessage.obtain(
+				operatorUserId, operatorUserAlias, data, message);
+		groupRequestMessage.setExtra(extra);
+		Send(conversationType, targetId, groupRequestMessage, pushContent,
+				pushData);
+	}
+
+	private void Send(int conversationType, String targetId,
+			MessageContent content, String pushContent, String pushData) {
 		RongIMClient.getInstance().sendMessage(
 				Conversation.ConversationType.setValue(conversationType),
-				targetId, customOperationMessage, pushContent, pushData,
+				targetId, content, pushContent, pushData,
 				new RongIMClient.SendMessageCallback() {
 					@Override
 					public void onError(Integer messageId,
@@ -579,6 +528,7 @@ public class RongCloudPlugin extends RongCloudPluginBase {
 						// UnitySendMessage("onSendTextMessageResultFailed",
 						// String.valueOf(e.getValue()));
 					}
+
 					@Override
 					public void onSuccess(Message message) {
 						UnitySendMessage("onSendMessageResult",
@@ -586,10 +536,6 @@ public class RongCloudPlugin extends RongCloudPluginBase {
 					}
 				});
 	}
-	
-	
-	
-	
 
 	public void _setConversationNotificationStatus(int conversationType,
 			String targetId, int notificationStatus) {

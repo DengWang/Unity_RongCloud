@@ -8,7 +8,8 @@
 
 #import <RongIMLib/RongIMLib.h>
 #import "RongCloudManager.h"
-#import "CustomOperationMessage.h"
+#import "GroupOperationMessage.h"
+#import "GroupRequestMessage.h"
 
 @implementation RongCloudManager
 
@@ -83,11 +84,20 @@
                     @"name":msg.name,
                     @"data":(msg.data == nil ? @"":msg.data)
                     };
-    }else if ([message.content isMemberOfClass:[CustomOperationMessage class]]){
-        CustomOperationMessage *msg = (CustomOperationMessage *)message.content;
+    }else if ([message.content isMemberOfClass:[GroupOperationMessage class]]){
+        GroupOperationMessage *msg = (GroupOperationMessage *)message.content;
         content = @{
                     @"operatorUserId":msg.operatorUserId,
                     @"operation":msg.operation,
+                    @"data":msg.data,
+                    @"message":msg.message,
+                    @"extra":(msg.extra == nil ? @"":msg.extra)
+                    };
+    }else if ([message.content isMemberOfClass:[GroupRequestMessage class]]){
+        GroupRequestMessage *msg = (GroupRequestMessage *)message.content;
+        content = @{
+                    @"operatorUserId":msg.operatorUserId,
+                    @"operatorUserAlias":msg.operatorUserAlias,
                     @"data":msg.data,
                     @"message":msg.message,
                     @"extra":(msg.extra == nil ? @"":msg.extra)

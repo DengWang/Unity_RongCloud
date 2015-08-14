@@ -9,7 +9,8 @@
 
 
 #import "UnityAppController.h"
-#import "CustomOperationMessage.h"
+#import "GroupOperationMessage.h"
+#import "GroupRequestMessage.h"
 #import <RongIMLib/RongIMLib.h>
 #import "RongCloudManager.h"
 
@@ -43,8 +44,8 @@ int _getSdkRunningMode(){
 
 void _init(const char * appKey){
     [[RCIMClient sharedRCIMClient] init: GetStringParam(appKey)];
-    [[RCIMClient sharedRCIMClient] registerMessageType: CustomOperationMessage.class];
-    
+    [[RCIMClient sharedRCIMClient] registerMessageType: GroupOperationMessage.class];
+    [[RCIMClient sharedRCIMClient] registerMessageType: GroupRequestMessage.class];
 }
 
 void _setDeviceToken(const char * deviceToken){
@@ -122,8 +123,22 @@ void _sendCmdMessage (int conversationType,const char * targetId, const char * n
 
 
 void _sendOperationMessage(int conversationType,const char * targetId, const char * operatorUserId, const char * operation, const char * data, const char * messageStr ,const char * extra ,const char * pushContent, const char * pushData){
-    CustomOperationMessage  * operationMessage = [CustomOperationMessage messageWithOperation:GetStringParam(operation) operatorUserId:GetStringParam(operatorUserId) data:GetStringParam(data) message:GetStringParam(messageStr) extra:GetStringParam(extra)];
+    GroupOperationMessage  * operationMessage = [GroupOperationMessage messageWithOperation:GetStringParam(operation) operatorUserId:GetStringParam(operatorUserId) data:GetStringParam(data) message:GetStringParam(messageStr) extra:GetStringParam(extra)];
     RCMessage * message  = [[RCIMClient sharedRCIMClient] sendMessage:(RCConversationType)conversationType targetId:GetStringParam(targetId) content:operationMessage pushContent:GetStringParam(pushContent) pushData:GetStringParam(pushData) success:^(long messageId){
+        UnitySendMessage( RONGCLOUDMANAGER, "onSendMessageSuccess", [NSString stringWithFormat:@"%li",messageId].UTF8String);
+    } error:^(RCErrorCode nErrorCode,long messageId){
+        NSDictionary * dict = @{@"messageId": @(messageId),@"errorCode":@((int)nErrorCode)};
+        UnitySendMessage( RONGCLOUDMANAGER, "onSendMessageFailed", [RongCloudManager jsonFromObject:dict].UTF8String);
+        
+    }];
+    UnitySendMessage(RONGCLOUDMANAGER, "onSendMessageResult", [RongCloudManager RCMessageToJson:message].UTF8String);
+    
+}
+
+
+void _sendRequestMessage(int conversationType,const char * targetId, const char * operatorUserId, const char * operatorUserAlias, const char * data, const char * messageStr ,const char * extra ,const char * pushContent, const char * pushData){
+    GroupRequestMessage  * requestMessage = [GroupRequestMessage messageWithOperation:GetStringParam(operatorUserId) operatorUserAlias:GetStringParam(operatorUserAlias) data:GetStringParam(data) message:GetStringParam(messageStr) extra:GetStringParam(extra)];
+    RCMessage * message  = [[RCIMClient sharedRCIMClient] sendMessage:(RCConversationType)conversationType targetId:GetStringParam(targetId) content:requestMessage pushContent:GetStringParam(pushContent) pushData:GetStringParam(pushData) success:^(long messageId){
         UnitySendMessage( RONGCLOUDMANAGER, "onSendMessageSuccess", [NSString stringWithFormat:@"%li",messageId].UTF8String);
     } error:^(RCErrorCode nErrorCode,long messageId){
         NSDictionary * dict = @{@"messageId": @(messageId),@"errorCode":@((int)nErrorCode)};

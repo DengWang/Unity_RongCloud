@@ -1,5 +1,5 @@
 //
-//  CustomOperationMessage.h
+//  GroupRequestMessage
 //  Unity-iPhone
 //
 //  Created by Deng Wang on 15/8/14.
@@ -11,14 +11,14 @@
 
 #import <RongIMLib/RongIMLib.h>
 
-#define CustomOperationMessageIdentifier @"VOLV:CustomOp"
+#define GroupRequestMessageIdentifier @"VOLV:GroupReq"
 
 
 
 /**
  *  群组消息类
  */
-@interface CustomOperationMessage : RCMessageContent
+@interface GroupRequestMessage : RCMessageContent
 /**
  *  操作人 UserId，可以为空
  */
@@ -26,7 +26,7 @@
 /**
  *  操作名，对应 GroupOperationXxxx，或任意字符串。
  */
-@property(nonatomic, strong) NSString *operation;
+@property(nonatomic, strong) NSString *operatorUserAlias;
 /**
  *  被操做人 UserId 或者操作数据（如改名后的名称）。
  */
@@ -51,11 +51,11 @@
  *
  *  @return 类方法
  */
-+ (instancetype)messageWithOperation:(NSString *)operation
-                           operatorUserId:(NSString *)operatorUserId
-                                     data:(NSString *)data
-                                  message:(NSString *)message
-                                    extra:(NSString *)extra;
++ (instancetype)messageWithOperation:(NSString *)operatorUserId
+                   operatorUserAlias:(NSString *)operatorUserAlias
+                                data:(NSString *)data
+                             message:(NSString *)message
+                               extra:(NSString *)extra;
 
 @end
 

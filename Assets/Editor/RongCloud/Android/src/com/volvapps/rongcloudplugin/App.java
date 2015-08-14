@@ -1,5 +1,5 @@
 package com.volvapps.rongcloudplugin;
-import com.volvapps.message.CustomOperationMessage;
+import com.volvapps.message.*;
 
 import android.app.ActivityManager;
 import android.app.Application;
@@ -44,7 +44,8 @@ public class App extends Application {
                 RongCloudEvent.init();
                 Thread.setDefaultUncaughtExceptionHandler(new RongExceptionHandler(this));
                 try {
-                    RongIMClient.registerMessageType(CustomOperationMessage.class);
+                    RongIMClient.registerMessageType(GroupOperationMessage.class);
+                    RongIMClient.registerMessageType(GroupRequestMessage.class);
                 } catch (Exception e) {
                     e.printStackTrace();
                 }

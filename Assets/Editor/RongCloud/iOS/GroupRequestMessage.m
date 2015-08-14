@@ -1,32 +1,32 @@
 //
-//  CustomOperationMessage.m
+//  GroupOperationMessage.m
 //  Unity-iPhone
 //
 //  Created by Deng Wang on 15/8/14.
 //
 //
 
-#import "CustomOperationMessage.h"
+#import "GroupRequestMessage.h"
 
 
-@implementation CustomOperationMessage
+@implementation GroupRequestMessage
 
-+(instancetype)messageWithOperation:(NSString *)operation
-                     operatorUserId:(NSString *)operatorUserId
++(instancetype)messageWithOperation:(NSString *)operatorUserId
+                        operatorUserAlias:(NSString *)operatorUserAlias
                                data:(NSString *)data
                             message:(NSString *)message
                               extra:(NSString *)extra
 
 {
-    CustomOperationMessage *operationMessage = [[CustomOperationMessage alloc] init];
-    if (operationMessage) {
-        operationMessage.operation = operation;
-        operationMessage.operatorUserId = operatorUserId;
-        operationMessage.data = data;
-        operationMessage.message = message;
-        operationMessage.extra = extra;
+    GroupRequestMessage *requestMessage = [[GroupRequestMessage alloc] init];
+    if (requestMessage) {
+        requestMessage.operatorUserAlias = operatorUserAlias;
+        requestMessage.operatorUserId = operatorUserId;
+        requestMessage.data = data;
+        requestMessage.message = message;
+        requestMessage.extra = extra;
     }
-    return operationMessage;
+    return requestMessage;
 }
 
 
@@ -39,7 +39,7 @@
 -(NSData *)encode {
     
     NSMutableDictionary *dataDict=[NSMutableDictionary dictionary];
-    [dataDict setObject:self.operation forKey:@"operation"];
+    [dataDict setObject:self.operatorUserAlias forKey:@"operatorUserAlias"];
     [dataDict setObject:self.operatorUserId forKey:@"operatorUserId"];
     [dataDict setObject:self.data forKey:@"data"];
     [dataDict setObject:self.message forKey:@"message"];
@@ -62,7 +62,7 @@
                                                            error:&__error];
     
     if (json) {
-        self.operation = json[@"operation"];
+        self.operatorUserAlias = json[@"operatorUserAlias"];
         self.operatorUserId = json[@"operatorUserId"];
         self.data = json[@"data"];
         self.message = json[@"message"];
@@ -71,7 +71,7 @@
 }
 
 +(NSString *)getObjectName {
-    return CustomOperationMessageIdentifier;
+    return GroupRequestMessageIdentifier;
 }
 
 @end

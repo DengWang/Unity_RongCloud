@@ -13,7 +13,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import com.volvapps.message.CustomOperationMessage;
+import com.volvapps.message.*;
 
 import android.net.Uri;
 import android.util.Log;
@@ -125,14 +125,22 @@ public class JsonHelper {
 			contentMap = new HashMap<String, Object>();
 			contentMap.put("name", commandNotificationMessage.getName());
 			contentMap.put("data", commandNotificationMessage.getData());
-		}else if (messageContent instanceof CustomOperationMessage){
-			CustomOperationMessage customOperationMessage = (CustomOperationMessage)messageContent;
+		}else if (messageContent instanceof GroupOperationMessage){
+			GroupOperationMessage groupOperationMessage = (GroupOperationMessage)messageContent;
 			contentMap = new HashMap<String, Object>();
-			contentMap.put("operatorUserId", customOperationMessage.getOperatorUserId());
-			contentMap.put("operation", customOperationMessage.getOperation());
-			contentMap.put("data", customOperationMessage.getData());
-			contentMap.put("message", customOperationMessage.getMessage());
-			contentMap.put("extra", customOperationMessage.getExtra());
+			contentMap.put("operatorUserId", groupOperationMessage.getOperatorUserId());
+			contentMap.put("operation", groupOperationMessage.getOperation());
+			contentMap.put("data", groupOperationMessage.getData());
+			contentMap.put("message", groupOperationMessage.getMessage());
+			contentMap.put("extra", groupOperationMessage.getExtra());
+		}else if (messageContent instanceof GroupRequestMessage){
+			GroupRequestMessage grouprequestMessage = (GroupRequestMessage)messageContent;
+			contentMap = new HashMap<String, Object>();
+			contentMap.put("operatorUserId", grouprequestMessage.getOperatorUserId());
+			contentMap.put("operatorUserAlias", grouprequestMessage.getOperatorUserAlias());
+			contentMap.put("data", grouprequestMessage.getData());
+			contentMap.put("message", grouprequestMessage.getMessage());
+			contentMap.put("extra", grouprequestMessage.getExtra());
 		}
 		messageMap.put("content", contentMap == null ? "{}" : contentMap);
 		return new JSONObject(messageMap).toString();
