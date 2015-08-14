@@ -59,7 +59,7 @@
         RCTextMessage *msg = (RCTextMessage *)message.content;
         content = @{
                     @"content":msg.content,
-                    @"extra":msg.extra == nil ? @"" : msg.extra,
+                    @"extra":(msg.extra == nil ? @"" : msg.extra)
                     };
         
     }else if ([message.content isMemberOfClass:[RCGroupNotificationMessage class]]){
@@ -69,19 +69,19 @@
                    @"data":msg.data,
                    @"operation":msg.operation,
                    @"message":msg.message,
-                   @"extra":msg.extra == nil ? @"" : msg.extra,
+                   @"extra":(msg.extra == nil ? @"" : msg.extra)
                    };
     }else if ([message.content isMemberOfClass:[RCInformationNotificationMessage class]]){
         RCInformationNotificationMessage *msg = (RCInformationNotificationMessage *)message.content;
         content = @{
                     @"message":msg.message,
-                    @"extra":msg.extra
+                    @"extra":(msg.extra == nil ? @"" : msg.extra)
                     };
     }else if ([message.content isMemberOfClass:[RCCommandNotificationMessage class]]){
         RCCommandNotificationMessage *msg = (RCCommandNotificationMessage *)message.content;
         content = @{
                     @"name":msg.name,
-                    @"data":msg.data
+                    @"data":(msg.data == nil ? @"":msg.data)
                     };
     }else if ([message.content isMemberOfClass:[CustomOperationMessage class]]){
         CustomOperationMessage *msg = (CustomOperationMessage *)message.content;
@@ -90,7 +90,7 @@
                     @"operation":msg.operation,
                     @"data":msg.data,
                     @"message":msg.message,
-                    @"extra":msg.extra
+                    @"extra":(msg.extra == nil ? @"":msg.extra)
                     };
     }
     NSString * json = [RongCloudManager jsonFromObject:@{
