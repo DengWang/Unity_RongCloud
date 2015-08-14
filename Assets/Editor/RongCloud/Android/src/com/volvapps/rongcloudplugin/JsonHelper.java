@@ -13,6 +13,8 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import com.volvapps.message.CustomOperationMessage;
+
 import android.net.Uri;
 import android.util.Log;
 
@@ -113,12 +115,24 @@ public class JsonHelper {
 			contentMap = new HashMap<String, Object>();
 			contentMap.put("content", textMessage.getContent());
 			contentMap.put("extra", textMessage.getExtra());
-
 		}else if(messageContent instanceof InformationNotificationMessage){
 			InformationNotificationMessage informationNotificationMessage = (InformationNotificationMessage)messageContent;
 			contentMap = new HashMap<String, Object>();
 			contentMap.put("message", informationNotificationMessage.getMessage());
 			contentMap.put("extra", informationNotificationMessage.getExtra());
+		}else if (messageContent instanceof CommandNotificationMessage){
+			CommandNotificationMessage commandNotificationMessage = (CommandNotificationMessage)messageContent;
+			contentMap = new HashMap<String, Object>();
+			contentMap.put("name", commandNotificationMessage.getName());
+			contentMap.put("data", commandNotificationMessage.getData());
+		}else if (messageContent instanceof CustomOperationMessage){
+			CustomOperationMessage customOperationMessage = (CustomOperationMessage)messageContent;
+			contentMap = new HashMap<String, Object>();
+			contentMap.put("operatorUserId", customOperationMessage.getOperatorUserId());
+			contentMap.put("operation", customOperationMessage.getOperation());
+			contentMap.put("data", customOperationMessage.getData());
+			contentMap.put("message", customOperationMessage.getMessage());
+			contentMap.put("extra", customOperationMessage.getExtra());
 		}
 		messageMap.put("content", contentMap == null ? "{}" : contentMap);
 		return new JSONObject(messageMap).toString();

@@ -57,6 +57,20 @@ namespace RongCloud
 		}
 
 
+		public static void SendCmdMessage (RCConversationType conversationType, string targetId, string cmdName, string data) {
+			if (Application.platform != RuntimePlatform.Android)
+				return;
+			_plugin.Call ("_sendCmdMessage", (int)conversationType, targetId, cmdName, data, "", "");
+		}
+
+
+
+		public static void SendOperationMessage(RCConversationType conversationType, string targetId, string operatorUserId, string operation, string data, string message, string extra, string pushContent, string pushData){
+			if (Application.platform != RuntimePlatform.Android)
+				return;
+			_plugin.Call ("_sendOperationMessage", (int)conversationType, targetId, operatorUserId, operation,data,message,extra, pushContent, pushData);
+		}
+
 		public static void AddToBlacklist (string userId)
 		{
 			if (Application.platform != RuntimePlatform.Android)

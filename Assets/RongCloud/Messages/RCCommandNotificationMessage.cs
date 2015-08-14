@@ -15,5 +15,12 @@ namespace RongCloud
 			get;
 			set;
 		}
+
+
+		public RCCommandNotificationMessage (string name, string data)
+		{
+			this.name = name;
+			this.data = data;
+		}
 	}
 }

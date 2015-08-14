@@ -8,7 +8,8 @@ public class Demo : MonoBehaviour
 {
 	#if UNITY_IPHONE
 	string token = "z5G1EInN8hTM2BAkCA9FHVuX0L/W2OKmeTvN4IB57Ld228wcoGbTmCVLyy5v6VIQAQ3E1/wg1L0o/CDsOtZj1w==";
-	#elif UNITY_ANDROID
+	
+#elif UNITY_ANDROID
 	string token = "8tHBY+r7m5fozIIoYFjI8noqi9ukpNaQStcltO2Qyr79FUphMYcV16YeZJywhMn4hmMmQ+paVJ5ipNwf7WoZwA==";
 	#endif
 
@@ -74,14 +75,18 @@ public class Demo : MonoBehaviour
 		if (GUI.Button (new Rect (50, 50, 150, 50), "SendMessageToUser")) {
 
 			if (manager.currentUserId == "1") {
-				RongCloudBinding.SendTextMessage (RCConversationType.ConversationType_PRIVATE, "2", "nihao" + Time.realtimeSinceStartup, Time.realtimeSinceStartup.ToString (), "nihao" + Time.realtimeSinceStartup,"nihao" + Time.realtimeSinceStartup);	
+//				RongCloudBinding.SendTextMessage (RCConversationType.ConversationType_PRIVATE, "2", "nihao" + Time.realtimeSinceStartup, Time.realtimeSinceStartup.ToString (), "nihao" + Time.realtimeSinceStartup,"nihao" + Time.realtimeSinceStartup);	
+				RongCloudBinding.SendOperationMessage (RCConversationType.ConversationType_PRIVATE, "2", "1", "Add", "nihao" + Time.realtimeSinceStartup, "Add", "", "", "");
+				
 			} else {
-				RongCloudBinding.SendTextMessage (RCConversationType.ConversationType_PRIVATE, "1", "nihao" + Time.realtimeSinceStartup, Time.realtimeSinceStartup.ToString (), "nihao" + Time.realtimeSinceStartup,  "nihao" + Time.realtimeSinceStartup);
+//				RongCloudBinding.SendTextMessage (RCConversationType.ConversationType_PRIVATE, "1", "nihao" + Time.realtimeSinceStartup, Time.realtimeSinceStartup.ToString (), "nihao" + Time.realtimeSinceStartup,  "nihao" + Time.realtimeSinceStartup);
+				RongCloudBinding.SendOperationMessage (RCConversationType.ConversationType_PRIVATE, "1", "2", "Kick", "nihao" + Time.realtimeSinceStartup, "Add", "", "", "");
 			}
 		}
 
 		if (GUI.Button (new Rect (350, 50, 150, 50), "SendMessageToGroup")) {
-			RongCloudBinding.SendTextMessage (RCConversationType.ConversationType_GROUP, "1", "nihao" + Time.realtimeSinceStartup, Time.realtimeSinceStartup.ToString (), "", "");
+//			RongCloudBinding.SendTextMessage (RCConversationType.ConversationType_GROUP, "1", "nihao" + Time.realtimeSinceStartup, Time.realtimeSinceStartup.ToString (), "", "");
+			RongCloudBinding.SendCmdMessage (RCConversationType.ConversationType_GROUP, "1", "Update", "");
 
 		}
 

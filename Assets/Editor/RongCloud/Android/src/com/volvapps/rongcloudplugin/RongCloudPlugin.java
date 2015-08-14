@@ -8,6 +8,8 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import com.volvapps.message.CustomOperationMessage;
+
 import android.util.Log;
 import io.rong.imlib.RongIMClient;
 import io.rong.imlib.RongIMClient.BlacklistStatus;
@@ -15,6 +17,7 @@ import io.rong.imlib.RongIMClient.ErrorCode;
 import io.rong.imlib.model.Conversation;
 import io.rong.imlib.model.Conversation.ConversationNotificationStatus;
 import io.rong.imlib.model.Message;
+import io.rong.message.CommandNotificationMessage;
 import io.rong.message.TextMessage;
 
 public class RongCloudPlugin extends RongCloudPluginBase {
@@ -475,13 +478,13 @@ public class RongCloudPlugin extends RongCloudPluginBase {
 						map.put("messageId", messageId);
 						map.put("errorCode", e.getValue());
 						JSONObject jsonObject = new JSONObject(map);
-						UnitySendMessage("onSendTextMessageFailed",
+						UnitySendMessage("onSendMessageFailed",
 						jsonObject.toString());
 					}
 
 					@Override
 					public void onSuccess(Integer integer) {
-						UnitySendMessage("onSendTextMessageSuccess",
+						UnitySendMessage("onSendMessageSuccess",
 								integer.toString());
 
 					}
@@ -495,12 +498,98 @@ public class RongCloudPlugin extends RongCloudPluginBase {
 
 					@Override
 					public void onSuccess(Message message) {
-						UnitySendMessage("onSendTextMessageResult",
+						UnitySendMessage("onSendMessageResult",
 								JsonHelper.MessagetoJSON(message));
 					}
 				});
 
 	}
+	
+	public void _sendCmdMessage(int conversationType, String targetId,
+			String cmdName, String data,String pushContent, String pushData ) {
+		CommandNotificationMessage cmdMessage = CommandNotificationMessage
+				.obtain(cmdName, data);
+		RongIMClient.getInstance().sendMessage(
+				Conversation.ConversationType.setValue(conversationType),
+				targetId, cmdMessage, pushContent, pushData,
+				new RongIMClient.SendMessageCallback() {
+					@Override
+					public void onError(Integer messageId,
+							RongIMClient.ErrorCode e) {
+						HashMap<String, Object> map = new HashMap<String, Object>();
+						map.put("messageId", messageId);
+						map.put("errorCode", e.getValue());
+						JSONObject jsonObject = new JSONObject(map);
+						UnitySendMessage("onSendMessageFailed",
+								jsonObject.toString());
+					}
+
+					@Override
+					public void onSuccess(Integer integer) {
+						UnitySendMessage("onSendMessageSuccess",
+								integer.toString());
+
+					}
+				}, new RongIMClient.ResultCallback<Message>() {
+					@Override
+					public void onError(ErrorCode e) {
+						// UnitySendMessage("onSendTextMessageResultFailed",
+						// String.valueOf(e.getValue()));
+
+					}
+
+					@Override
+					public void onSuccess(Message message) {
+						UnitySendMessage("onSendMessageResult",
+								JsonHelper.MessagetoJSON(message));
+					}
+				});
+	}
+	
+	
+	
+	public void _sendOperationMessage(int conversationType, String targetId,
+			String operatorUserId, String operation,String data, String message, String extra, String pushContent, String pushData ) {
+		CustomOperationMessage customOperationMessage = CustomOperationMessage.obtain(operatorUserId, operation,data,message);
+		customOperationMessage.setExtra(extra);
+		RongIMClient.getInstance().sendMessage(
+				Conversation.ConversationType.setValue(conversationType),
+				targetId, customOperationMessage, pushContent, pushData,
+				new RongIMClient.SendMessageCallback() {
+					@Override
+					public void onError(Integer messageId,
+							RongIMClient.ErrorCode e) {
+						HashMap<String, Object> map = new HashMap<String, Object>();
+						map.put("messageId", messageId);
+						map.put("errorCode", e.getValue());
+						JSONObject jsonObject = new JSONObject(map);
+						UnitySendMessage("onSendMessageFailed",
+								jsonObject.toString());
+					}
+
+					@Override
+					public void onSuccess(Integer integer) {
+						UnitySendMessage("onSendMessageSuccess",
+								integer.toString());
+
+					}
+				}, new RongIMClient.ResultCallback<Message>() {
+					@Override
+					public void onError(ErrorCode e) {
+						// UnitySendMessage("onSendTextMessageResultFailed",
+						// String.valueOf(e.getValue()));
+					}
+					@Override
+					public void onSuccess(Message message) {
+						UnitySendMessage("onSendMessageResult",
+								JsonHelper.MessagetoJSON(message));
+					}
+				});
+	}
+	
+	
+	
+	
 
 	public void _setConversationNotificationStatus(int conversationType,
 			String targetId, int notificationStatus) {

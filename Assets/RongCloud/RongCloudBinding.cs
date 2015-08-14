@@ -7,8 +7,9 @@ namespace RongCloud
 	#if UNITY_IPHONE
 	using Binding = RongCloudiOSBinding;
 
-	#elif UNITY_ANDROID
-	using Binding  = RongCloudAndroidBinding;
+	
+#elif UNITY_ANDROID
+	using Binding = RongCloudAndroidBinding;
 	#endif
 
 	public class RongCloudBinding
@@ -27,6 +28,17 @@ namespace RongCloud
 		public static void SendTextMessage (RCConversationType conversationType, string targetId, string content, string extra, string pushContent, string pushData)
 		{
 			Binding.SendTextMessage (conversationType, targetId, content, extra, pushContent, pushData);
+		}
+
+		public static void SendCmdMessage (RCConversationType conversationType, string targetId, string cmdName, string data)
+		{
+			Binding.SendCmdMessage (conversationType, targetId, cmdName, data);
+		}
+
+
+		public static void SendOperationMessage (RCConversationType conversationType, string targetId, string operatorUserId, string operation, string data, string message, string extra, string pushContent, string pushData)
+		{
+			Binding.SendOperationMessage (conversationType, targetId, operatorUserId, operation, data, message, extra, pushContent, pushData);
 		}
 
 		public static void AddToBlacklist (string userId)
@@ -167,7 +179,7 @@ namespace RongCloud
 		#if UNITY_ANDROID
 		public static void Reconnect ()
 		{
-			RongCloudAndroidBinding.Reconnect();
+			RongCloudAndroidBinding.Reconnect ();
 		}
 		#endif
 		public static void RemoveFromBlacklist (string userId)
@@ -195,7 +207,7 @@ namespace RongCloud
 		#if UNITY_ANDROID
 		public static void SetMessageSentStatus (int messageId, RCSentStatus sentStatus)
 		{
-			RongCloudAndroidBinding.SetMessageSentStatus(messageId,sentStatus);
+			RongCloudAndroidBinding.SetMessageSentStatus (messageId, sentStatus);
 		}
 		#endif
 

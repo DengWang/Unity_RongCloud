@@ -8,6 +8,7 @@
 
 #import <RongIMLib/RongIMLib.h>
 #import "RongCloudManager.h"
+#import "CustomOperationMessage.h"
 
 @implementation RongCloudManager
 
@@ -60,7 +61,7 @@
                     @"content":msg.content,
                     @"extra":msg.extra == nil ? @"" : msg.extra,
                     };
-       
+        
     }else if ([message.content isMemberOfClass:[RCGroupNotificationMessage class]]){
         RCGroupNotificationMessage *msg = (RCGroupNotificationMessage *)message.content;
         content =@{
@@ -73,6 +74,21 @@
     }else if ([message.content isMemberOfClass:[RCInformationNotificationMessage class]]){
         RCInformationNotificationMessage *msg = (RCInformationNotificationMessage *)message.content;
         content = @{
+                    @"message":msg.message,
+                    @"extra":msg.extra
+                    };
+    }else if ([message.content isMemberOfClass:[RCCommandNotificationMessage class]]){
+        RCCommandNotificationMessage *msg = (RCCommandNotificationMessage *)message.content;
+        content = @{
+                    @"name":msg.name,
+                    @"data":msg.data
+                    };
+    }else if ([message.content isMemberOfClass:[CustomOperationMessage class]]){
+        CustomOperationMessage *msg = (CustomOperationMessage *)message.content;
+        content = @{
+                    @"operatorUserId":msg.operatorUserId,
+                    @"operation":msg.operation,
+                    @"data":msg.data,
                     @"message":msg.message,
                     @"extra":msg.extra
                     };

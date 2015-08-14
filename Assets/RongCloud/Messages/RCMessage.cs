@@ -127,8 +127,16 @@ namespace RongCloud
 				case "RC:InfoNtf":
 					this.content = new RCInformationNotificationMessage (dict ["message"].ToString (), dict ["extra"].ToString ());
 					break;
+				case "RC:CmdNtf":
+					this.content = new RCCommandNotificationMessage (dict ["name"].ToString (), dict ["data"].ToString ());
+					break;
+				case "VOLV:CustomOp":
+					this.content = new CustomOperationMessage (dict ["operatorUserId"].ToString (), dict ["operation"].ToString (), dict ["data"].ToString (), dict ["message"].ToString (), dict ["extra"].ToString ());
+					break;
+				default:
+					this.content = null;
+					break;
 				}
-
 			} else {
 				this.content = null;
 			}

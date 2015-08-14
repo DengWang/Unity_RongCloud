@@ -1,4 +1,6 @@
 package com.volvapps.rongcloudplugin;
+import com.volvapps.message.CustomOperationMessage;
+
 import android.app.ActivityManager;
 import android.app.Application;
 import android.content.Context;
@@ -41,6 +43,11 @@ public class App extends Application {
             	Log.i(TAG, "RongCloudEvent init ");
                 RongCloudEvent.init();
                 Thread.setDefaultUncaughtExceptionHandler(new RongExceptionHandler(this));
+                try {
+                    RongIMClient.registerMessageType(CustomOperationMessage.class);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
                
             }
         }
