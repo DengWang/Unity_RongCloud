@@ -38,11 +38,11 @@ public class Demo : MonoBehaviour
 	void onConnectSuccessEvent (string userId)
 	{
 		Debug.Log ("JoinGroup");
-		RCGroup group1 = new RCGroup ("1", "TestGroup", "");
-		RCGroup group2 = new RCGroup ("2", "TestGroup2", "");
-		RCGroup group3 = new RCGroup ("3", "TestGroup3", "");
+        RCGroup group1 = new RCGroup ("107968", "你大爷", "");
+//        RCGroup group2 = new RCGroup ("107969", "你大爷", "");
+//        RCGroup group3 = new RCGroup ("107960", "你大爷", "");
 
-		RongCloudBinding.SyncGroups (new List<RCGroup> (){ group1, group2, group3 });
+		RongCloudBinding.SyncGroups (new List<RCGroup> (){ group1});
 
 		RongCloudBinding.GetConversationNotificationStatus (RCConversationType.ConversationType_GROUP, "1");
 		RongCloudBinding.GetConversationNotificationStatus (RCConversationType.ConversationType_PRIVATE, "2");

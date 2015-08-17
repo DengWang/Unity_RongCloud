@@ -28,9 +28,9 @@ public class App extends Application {
          * 只有两个进程需要初始化，主进程和 push 进程
          */
         
+        String packageName = getApplicationContext().getPackageName();
         
-        
-        if("com.volvapps.rongcloud".equals(getCurProcessName(getApplicationContext())) ||
+        if(packageName.equals(getCurProcessName(getApplicationContext())) ||
                 "io.rong.push".equals(getCurProcessName(getApplicationContext()))) {
         	Log.i(TAG, "RongClientIM init ");
         	RongIMClient.init(this);
@@ -39,7 +39,7 @@ public class App extends Application {
              *
              * 注册相关代码，只需要在主进程里做。
              */
-            if ("com.volvapps.rongcloud".equals(getCurProcessName(getApplicationContext()))) {
+            if (packageName.equals(getCurProcessName(getApplicationContext()))) {
             	Log.i(TAG, "RongCloudEvent init ");
                 RongCloudEvent.init();
                 Thread.setDefaultUncaughtExceptionHandler(new RongExceptionHandler(this));
@@ -66,5 +66,4 @@ public class App extends Application {
         }
         return null;
     }
-
 }
