@@ -6,7 +6,6 @@ import io.rong.imlib.model.MessageContent;
 import io.rong.message.*;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 
 import org.json.JSONArray;
@@ -21,8 +20,6 @@ import android.util.Log;
 public class JsonHelper {
 
 	public final static String TAG = "Unity";
-
-	
 
 	public static List<Group> GroupsFromJSON2(String json) {
 		if (json == null || json.length() == 0) {
@@ -54,9 +51,7 @@ public class JsonHelper {
 		}
 		return groups;
 	}
-	
-	
-	
+
 	public static List<Group> GroupsFromJSON(String json) {
 		if (json == null || json.length() == 0) {
 			return null;
@@ -88,62 +83,68 @@ public class JsonHelper {
 		}
 		return groups;
 	}
-	
 
 	public static String MessagetoJSON(Message message) {
+		try {
+			JSONObject messageMap = new JSONObject();
+			messageMap.put("conversationType", message.getConversationType()
+					.getValue());
 
-		HashMap<String, Object> messageMap = new HashMap<String, Object>();
-		messageMap.put("conversationType", message.getConversationType()
-				.getValue());
-		messageMap.put("targetId", message.getTargetId());
-		messageMap.put("messageId", message.getMessageId());
-		messageMap.put("messageDirection", message.getMessageDirection()
-				.getValue());
-		messageMap.put("senderUserId", message.getSenderUserId());
-		messageMap.put("receivedStatus", message.getReceivedStatus().getFlag());
-		messageMap.put("sentStatus", message.getSentStatus().getValue());
+			messageMap.put("targetId", message.getTargetId());
+			messageMap.put("messageId", message.getMessageId());
+			messageMap.put("messageDirection", message.getMessageDirection()
+					.getValue());
+			messageMap.put("senderUserId", message.getSenderUserId());
+			messageMap.put("receivedStatus", message.getReceivedStatus()
+					.getFlag());
+			messageMap.put("sentStatus", message.getSentStatus().getValue());
 
-		messageMap.put("receivedTime", message.getReceivedTime());
-		messageMap.put("sentTime", message.getSentTime());
-		messageMap.put("objectName", message.getObjectName());
+			messageMap.put("receivedTime", message.getReceivedTime());
+			messageMap.put("sentTime", message.getSentTime());
+			messageMap.put("objectName", message.getObjectName());
 
-		MessageContent messageContent = message.getContent();
-		HashMap<String, Object> contentMap = null;
-		Log.i(App.TAG, message.getObjectName());
-		if (messageContent instanceof TextMessage) {// 文本消息
-			TextMessage textMessage = (TextMessage) messageContent;
-			contentMap = new HashMap<String, Object>();
-			contentMap.put("content", textMessage.getContent());
-			contentMap.put("extra", textMessage.getExtra());
-		}else if(messageContent instanceof InformationNotificationMessage){
-			InformationNotificationMessage informationNotificationMessage = (InformationNotificationMessage)messageContent;
-			contentMap = new HashMap<String, Object>();
-			contentMap.put("message", informationNotificationMessage.getMessage());
-			contentMap.put("extra", informationNotificationMessage.getExtra());
-		}else if (messageContent instanceof CommandNotificationMessage){
-			CommandNotificationMessage commandNotificationMessage = (CommandNotificationMessage)messageContent;
-			contentMap = new HashMap<String, Object>();
-			contentMap.put("name", commandNotificationMessage.getName());
-			contentMap.put("data", commandNotificationMessage.getData());
-		}else if (messageContent instanceof GroupOperationMessage){
-			GroupOperationMessage groupOperationMessage = (GroupOperationMessage)messageContent;
-			contentMap = new HashMap<String, Object>();
-			contentMap.put("operatorUserId", groupOperationMessage.getOperatorUserId());
-			contentMap.put("operation", groupOperationMessage.getOperation());
-			contentMap.put("data", groupOperationMessage.getData());
-			contentMap.put("message", groupOperationMessage.getMessage());
-			contentMap.put("extra", groupOperationMessage.getExtra());
-		}else if (messageContent instanceof GroupRequestMessage){
-			GroupRequestMessage grouprequestMessage = (GroupRequestMessage)messageContent;
-			contentMap = new HashMap<String, Object>();
-			contentMap.put("operatorUserId", grouprequestMessage.getOperatorUserId());
-			contentMap.put("operatorUserAlias", grouprequestMessage.getOperatorUserAlias());
-			contentMap.put("data", grouprequestMessage.getData());
-			contentMap.put("message", grouprequestMessage.getMessage());
-			contentMap.put("extra", grouprequestMessage.getExtra());
+			MessageContent messageContent = message.getContent();
+			JSONObject contentMap = new JSONObject();
+			Log.i(App.TAG, message.getObjectName());
+			if (messageContent instanceof TextMessage) {// 文本消息
+				TextMessage textMessage = (TextMessage) messageContent;
+				contentMap.put("content", textMessage.getContent());
+				contentMap.put("extra", textMessage.getExtra());
+			} else if (messageContent instanceof InformationNotificationMessage) {
+				InformationNotificationMessage informationNotificationMessage = (InformationNotificationMessage) messageContent;
+				contentMap.put("message",
+						informationNotificationMessage.getMessage());
+				contentMap.put("extra",
+						informationNotificationMessage.getExtra());
+			} else if (messageContent instanceof CommandNotificationMessage) {
+				CommandNotificationMessage commandNotificationMessage = (CommandNotificationMessage) messageContent;
+				contentMap.put("name", commandNotificationMessage.getName());
+				contentMap.put("data", commandNotificationMessage.getData());
+			} else if (messageContent instanceof GroupOperationMessage) {
+				GroupOperationMessage groupOperationMessage = (GroupOperationMessage) messageContent;
+				contentMap.put("operatorUserId",
+						groupOperationMessage.getOperatorUserId());
+				contentMap.put("operation",
+						groupOperationMessage.getOperation());
+				contentMap.put("data", groupOperationMessage.getData());
+				contentMap.put("message", groupOperationMessage.getMessage());
+				contentMap.put("extra", groupOperationMessage.getExtra());
+			} else if (messageContent instanceof GroupRequestMessage) {
+				GroupRequestMessage grouprequestMessage = (GroupRequestMessage) messageContent;
+				contentMap.put("operatorUserId",
+						grouprequestMessage.getOperatorUserId());
+				contentMap.put("operatorUserAlias",
+						grouprequestMessage.getOperatorUserAlias());
+				contentMap.put("data", grouprequestMessage.getData());
+				contentMap.put("message", grouprequestMessage.getMessage());
+				contentMap.put("extra", grouprequestMessage.getExtra());
+			}
+			messageMap.put("content", contentMap);
+			return messageMap.toString();
+		} catch (JSONException e) {
+			e.printStackTrace();
+			return "{}";
 		}
-		messageMap.put("content", contentMap == null ? "{}" : contentMap);
-		return new JSONObject(messageMap).toString();
 	}
 
 	public static String MessagesToJSON(List<Message> messages) {
