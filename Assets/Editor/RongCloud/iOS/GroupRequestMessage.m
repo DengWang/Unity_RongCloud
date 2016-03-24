@@ -34,7 +34,27 @@
     return (MessagePersistent_ISPERSISTED | MessagePersistent_ISCOUNTED);
 }
 
+/// NSCoding
+- (instancetype)initWithCoder:(NSCoder *)aDecoder {
+    self = [super init];
+    if (self) {
+        self.operatorUserId = [aDecoder decodeObjectForKey:@"operatorUserId"];
+        self.operatorUserAlias = [aDecoder decodeObjectForKey:@"operatorUserAlias"];
+        self.data = [aDecoder decodeObjectForKey:@"data"];
+        self.message = [aDecoder decodeObjectForKey:@"message"];
+        self.extra = [aDecoder decodeObjectForKey:@"extra"];
+    }
+    return self;
+}
 
+/// NSCoding
+- (void)encodeWithCoder:(NSCoder *)aCoder {
+    [aCoder encodeObject:self.operatorUserId forKey:@"operatorUserId"];
+    [aCoder encodeObject:self.operatorUserAlias forKey:@"operatorUserAlias"];
+    [aCoder encodeObject:self.data forKey:@"data"];
+    [aCoder encodeObject:self.message forKey:@"message"];
+    [aCoder encodeObject:self.extra forKey:@"extra"];
+}
 
 -(NSData *)encode {
     
@@ -44,7 +64,6 @@
     [dataDict setObject:self.data forKey:@"data"];
     [dataDict setObject:self.message forKey:@"message"];
     [dataDict setObject:self.extra forKey:@"extra"];
-    //NSDictionary* dataDict = [NSDictionary dictionaryWithObjectsAndKeys:self.content, @"content", nil];
     NSData *data = [NSJSONSerialization dataWithJSONObject:dataDict
                                                    options:kNilOptions
                                                      error:nil];
@@ -54,20 +73,21 @@
 
 -(void)decodeWithData:(NSData *)data {
     
-    if (!data) {
-        return;
-    }
-    NSDictionary *json = [NSJSONSerialization JSONObjectWithData:data
-                                                         options:kNilOptions
-                                                           error:&__error];
     
-    if (json) {
-        self.operatorUserAlias = json[@"operatorUserAlias"];
-        self.operatorUserId = json[@"operatorUserId"];
-        self.data = json[@"data"];
-        self.message = json[@"message"];
-        self.extra = json[@"extra"];
+    if (data) {
+        __autoreleasing NSError *error = nil;
+        
+        NSDictionary *dictionary = [NSJSONSerialization JSONObjectWithData:data options:kNilOptions error:&error];
+        
+        if (dictionary) {
+            self.operatorUserAlias = dictionary[@"operatorUserAlias"];
+            self.operatorUserId = dictionary[@"operatorUserId"];
+            self.data = dictionary[@"data"];
+            self.message = dictionary[@"message"];
+            self.extra = dictionary[@"extra"];
+        }
     }
+
 }
 
 +(NSString *)getObjectName {

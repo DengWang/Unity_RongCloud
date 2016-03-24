@@ -14,203 +14,163 @@
 #define __RCUtilities
 
 #import <UIKit/UIKit.h>
-#import "RCMessageContent.h"
 
-#define __BASE64(text) [CommonFunc base64StringFromText:text]
-#define __TEXT(base64) [CommonFunc textFromBase64String:base64]
-
-@class RCMessageContent;
-
-typedef uint32_t CCAlgorithm;
-/**
- *  工具类
+/*!
+ 工具类
  */
 @interface RCUtilities : NSObject
-/**
- *  methodsInClass
- *
- *  @param aClass 类名
- *
- *  @return  methodArray
- */
-+ (NSArray *)methodsInClass:(Class)aClass;
-/**
- *  iVarsInClass
- *
- *  @param aClass 类名
- *
- *  @return  ivarsArray
- */
-+ (NSArray *)iVarsInClass:(Class)aClass;
-/**
- *  get currentSystemTime
- *
- *  @return currentSystemTime
- */
-+ (NSString *)currentSystemTime;
 
-// Base64 Encode & Decode
-
-/**
- *  base64格式字符串转换为文本数据
- *
- *  @param  string 要转换的字符串
- *
- *  @return base64数据
+/*!
+ 将base64编码的字符串解码并转换为NSData数据
+ 
+ @param string      base64编码的字符串
+ @return            解码后的NSData数据
+ 
+ @discussion 此方法主要用于iOS6解码base64。
  */
 + (NSData *)dataWithBase64EncodedString:(NSString *)string;
 
-/**
- *  文本数据转换为base64格式字符串
- *
- *  @param data 要转换的文本数据
- *
- *  @return 转换后的字符串
+/*!
+ 将NSData数据转化并编码为base64的字符串
+ 
+ @param data    未编码的NSData数据
+ @return        编码后的base64字符串
+ 
+ @discussion 此方法主要用于iOS6编码base64。
  */
 + (NSString *)base64EncodedStringFrom:(NSData *)data;
 
-/**
- *  文本数据进行DES加密。备注：此函数不可用于过长文本。
- *
- *  @param data data
- *  @param key  key
- *
- *  @return (NSData *)
+/*!
+ scaleImage
+ 
+ @param image           image
+ @param scaleSize       scaleSize
+ 
+ @return                scaled image
  */
-+ (NSData *)desEncrypt:(NSData *)data WithKey:(NSString *)key;
++ (UIImage *)scaleImage:(UIImage *)image
+                toScale:(float)scaleSize;
 
-/**
- *  文本数据进行DES解密。备注：此函数不可用于过长文本。
- *
- *  @param data data
- *  @param key  key
- *
- *  @return (NSData *)
+/*!
+ imageByScalingAndCropSize
+ 
+ @param image           image
+ @param targetSize      targetSize
+ 
+ @return                image
  */
-+ (NSData *)desDecrypt:(NSData *)data WithKey:(NSString *)key;
++ (UIImage *)imageByScalingAndCropSize:(UIImage *)image
+                            targetSize:(CGSize)targetSize;
 
-/**
- *  string to base64String
- *
- *  @param text 要转换的文本字符串
- *
- *  @return base64string
+/*!
+ compressedImageWithMaxDataLength
+ 
+ @param image               image
+ @param maxDataLength       maxDataLength
+ 
+ @return                    nsdate
  */
-+ (NSString *)base64StringFromText:(NSString *)text;
++ (NSData *)compressedImageWithMaxDataLength:(UIImage *)image
+                               maxDataLength:(CGFloat)maxDataLength;
 
-/**
- *  base64stirng to string
- *
- *  @param base64 string
- *
- *  @return string
+/*!
+ compressedImageAndScalingSize
+ 
+ @param image           image
+ @param targetSize      targetSize
+ @param maxDataLen      maxDataLen
+ 
+ @return                image nsdata
  */
-+ (NSString *)textFromBase64String:(NSString *)base64;
++ (NSData *)compressedImageAndScalingSize:(UIImage *)image
+                               targetSize:(CGSize)targetSize
+                               maxDataLen:(CGFloat)maxDataLen;
 
-//+ (NSString *)obtainLegalUTF8String:(char *)rawstr length:(int)length;
+/*!
+ compressedImageAndScalingSize
+ 
+ @param image           image
+ @param targetSize      targetSize
+ @param percent         percent
+ 
+ @return                image nsdata
+ */
++ (NSData *)compressedImageAndScalingSize:(UIImage *)image
+                               targetSize:(CGSize)targetSize
+                                  percent:(CGFloat)percent;
+/*!
+ compressedImage
+ 
+ @param image           image
+ @param percent         percent
+ 
+ @return                image nsdata
+ */
++ (NSData *)compressedImage:(UIImage *)image
+                    percent:(CGFloat)percent;
 
-/**
- *  scaleImage
- *
- *  @param image     image
- *  @param scaleSize scaleSize
- *
- *  @return scaled image
- */
-+ (UIImage *)scaleImage:(UIImage *)image toScale:(float)scaleSize;
-
-/**
- *  imageByScalingAndCropSize
- *
- *  @param image      image
- *  @param targetSize targetSize
- *
- *  @return image
- */
-+ (UIImage *)imageByScalingAndCropSize:(UIImage *)image targetSize:(CGSize)targetSize;
-
-/**
- *  compressedImageWithMaxDataLength
- *
- *  @param image         image
- *  @param maxDataLength maxDataLength
- *
- *  @return nsdate
- */
-+ (NSData *)compressedImageWithMaxDataLength:(UIImage *)image maxDataLength:(CGFloat)maxDataLength;
-
-/**
- *  compressedImageAndScalingSize
- *
- *  @param image      image
- *  @param targetSize targetSize
- *  @param maxDataLen maxDataLen
- *
- *  @return image nsdata
- */
-+ (NSData *)compressedImageAndScalingSize:(UIImage *)image targetSize:(CGSize)targetSize maxDataLen:(CGFloat)maxDataLen;
-/**
- *  compressedImageAndScalingSize
- *
- *  @param image      image
- *  @param targetSize targetSize
- *  @param percent    percent
- *
- *  @return image nsdata
- */
-+ (NSData *)compressedImageAndScalingSize:(UIImage *)image targetSize:(CGSize)targetSize percent:(CGFloat)percent;
-/**
- *  excludeBackupKeyForURL
- *
- *  @param storageURL storageURL
- *
- *  @return BOOL
+/*!
+ excludeBackupKeyForURL
+ 
+ @param storageURL      storageURL
+ 
+ @return                BOOL
  */
 + (BOOL)excludeBackupKeyForURL:(NSURL *)storageURL;
-/**
- *  applicationDocumentsDirectory
- *
- *  @return applicationDocumentsDirectory
+
+/*!
+ 获取App的文件存放路径
+ 
+ @return    App的文件存放路径
  */
 + (NSString *)applicationDocumentsDirectory;
-/**
- *  rongDocumentsDirectory
- *
- *  @return rongDocumentsDirectory
+
+/*!
+ 获取融云SDK的文件存放路径
+ 
+ @return    融云SDK的文件存放路径
  */
 + (NSString *)rongDocumentsDirectory;
-/**
- *  rongImageCacheDirectory
- *
- *  @return rongImageCacheDirectory
+
+/*!
+ 获取融云SDK的缓存路径
+ 
+ @return    融云SDK的缓存路径
  */
 + (NSString *)rongImageCacheDirectory;
 
-/**
- *  获取当前运营商名称
- *
- *  @return 当前运营商名称
+/*!
+ 获取当前系统时间
+ 
+ @return    当前系统时间
+ */
++ (NSString *)currentSystemTime;
+
+/*!
+ 获取当前运营商名称
+ 
+ @return    当前运营商名称
  */
 + (NSString *)currentCarrier;
 
-/**
- *  获取当前网络类型
- *
- *  @return 当前网络类型
+/*!
+ 获取当前网络类型
+ 
+ @return    当前网络类型
  */
 + (NSString *)currentNetWork;
 
-/**
- *  获取系统版本
- *
- *  @return 系统版本
+/*!
+ 获取系统版本
+ 
+ @return    系统版本
  */
 + (NSString *)currentSystemVersion;
 
-/**
- *  获取设备型号
- *
- *  @return 设备型号
+/*!
+ 获取设备型号
+ 
+ @return    设备型号
  */
 + (NSString *)currentDeviceModel;
 

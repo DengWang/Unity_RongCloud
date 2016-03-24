@@ -3,11 +3,11 @@ package com.volvapps.message;
 import android.os.Parcel;
 import android.text.TextUtils;
 
-import com.sea_monster.common.ParcelUtils;
+import io.rong.common.ParcelUtils;
 
 import io.rong.imlib.MessageTag;
 import io.rong.imlib.model.MessageContent;
-import io.rong.message.utils.RLog;
+import io.rong.common.RLog;
 
 import java.io.UnsupportedEncodingException;
 

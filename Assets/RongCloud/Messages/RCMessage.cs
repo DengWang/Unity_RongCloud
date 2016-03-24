@@ -69,7 +69,10 @@ namespace RongCloud
 			set;
 		}
 
-
+		public string   messageUId {
+			get;
+			set;
+		}
 
 		public override string ToString ()
 		{
@@ -86,18 +89,19 @@ namespace RongCloud
 		{
 			if (dict != null) {
 				RCMessage message = new RCMessage (
-					                    dict ["conversationType"].ToString (),
-					                    dict ["targetId"].ToString (),
-					                    dict ["messageId"].ToString (),
-					                    dict ["messageDirection"].ToString (),
-					                    dict ["senderUserId"].ToString (),
-					                    dict ["receivedStatus"].ToString (),
-					                    dict ["sentStatus"].ToString (),
-					                    dict ["receivedTime"].ToString (),
-					                    dict ["sentTime"].ToString (),
-					                    dict ["objectName"].ToString (),
-					                    dict ["content"]
-				                    );
+					                                dict ["conversationType"].ToString (),
+					                                dict ["targetId"].ToString (),
+					                                dict ["messageId"].ToString (),
+					                                dict ["messageDirection"].ToString (),
+					                                dict ["senderUserId"].ToString (),
+					                                dict ["receivedStatus"].ToString (),
+					                                dict ["sentStatus"].ToString (),
+					                                dict ["receivedTime"].ToString (),
+					                                dict ["sentTime"].ToString (),
+					                                dict ["objectName"].ToString (),
+					                                dict ["content"],
+					                                dict ["messageUId"].ToString ()
+				                                );
 				return message;
 			} else {
 				Debug.LogError ("dict is null");
@@ -106,7 +110,7 @@ namespace RongCloud
 		}
 
 
-		RCMessage (string conversationType, string targetId, string  messageId, string messageDirection, string senderUserId, string receivedStatus, string sentStatus, string receivedTime, string sentTime, string objectName, object content)
+		RCMessage (string conversationType, string targetId, string  messageId, string messageDirection, string senderUserId, string receivedStatus, string sentStatus, string receivedTime, string sentTime, string objectName, object content, string messageUId)
 		{
 			this.conversationType = (RCConversationType)int.Parse (conversationType);
 			this.targetId = targetId;
@@ -118,6 +122,7 @@ namespace RongCloud
 			this.receivedTime = long.Parse (receivedTime);
 			this.sentTime = long.Parse (sentTime);
 			this.objectName = objectName;
+			this.messageUId = messageUId;
 			Dictionary<string,object> dict = content as Dictionary<string,object>;
 			if (dict != null) {
 				switch (this.objectName) {

@@ -8,6 +8,26 @@ namespace RongCloud
     public class RongCloudManager : MonoBehaviour
     {
 
+
+
+		private static RongCloudManager _Instance = null;
+
+		public static RongCloudManager inst {
+			get {
+				if (_Instance == null) {
+					_Instance = GameObject.FindObjectOfType (typeof(RongCloudManager)) as RongCloudManager;
+					if (_Instance == null) {
+						Debug.LogWarning ("No instance of " + typeof(RongCloudManager).ToString () + ", a temporary one is created.");
+						_Instance = new GameObject ("A Temp Instance of " + typeof(RongCloudManager).ToString (), typeof(RongCloudManager)).GetComponent<RongCloudManager> ();
+						if (_Instance == null) {
+							Debug.LogError ("Problem during the creation of " + typeof(RongCloudManager).ToString ());
+						}
+					}
+				}
+				return _Instance;
+			}
+		}
+
         public string currentUserId {
             get;
             set;
@@ -17,7 +37,9 @@ namespace RongCloud
         void Awake ()
         {
             DontDestroyOnLoad (this);
+			_Instance = this;
             gameObject.name = this.GetType ().Name;
+
         }
 
 
@@ -86,9 +108,7 @@ namespace RongCloud
 
         public void onSendMessageFailed (string json)
         {
-
             Debug.Log ("onSendMessageFailed : " + json);
-
             Dictionary<string,object> dict = MiniJSON.Json.Deserialize (json) as Dictionary<string,object>;
             long messageId = long.Parse (dict ["messageId"].ToString ());
             RCErrorCode errorCode = (RCErrorCode)int.Parse (dict ["errorCode"].ToString ());
@@ -205,75 +225,6 @@ namespace RongCloud
                 onSetConversationNotificationStatusFailedEvent (val);
             }
         }
-
-        public static event Action onSyncGroupsSuccessEvent;
-        public static event Action<RCErrorCode> onSyncGroupsFailedEvent;
-
-
-        public void onSyncGroupsSuccess (string empty)
-        {
-            Debug.Log ("onSyncGroupsSuccess");
-            if (onSyncGroupsSuccessEvent != null) {
-                onSyncGroupsSuccessEvent ();
-            }
-        }
-
-        public void onSyncGroupsFailed (string errorCode)
-        {
-            var val = (RCErrorCode)int.Parse (errorCode);
-            Debug.Log ("onSyncGroupsFailedEvent : " + val);
-            if (onSyncGroupsFailedEvent != null) {
-                onSyncGroupsFailedEvent (val);
-            }
-        }
-
-
-        public static event Action onJoinGroupSuccessEvent;
-
-        public static event Action<RCErrorCode> onJoinGroupFailedEvent;
-
-        public void onJoinGroupSuccess (string empty)
-        {
-            Debug.Log ("onJoinGroupSuccess");
-            if (onJoinGroupSuccessEvent != null) {
-                onJoinGroupSuccessEvent ();
-            }
-        }
-
-
-        public void onJoinGroupFailed (string errorCode)
-        {
-            var val = (RCErrorCode)int.Parse (errorCode);
-            Debug.Log ("onJoinGroupFailed : " + val);
-            if (onJoinGroupFailedEvent != null) {
-                onJoinGroupFailedEvent (val);
-            }
-        }
-
-
-        public static event Action onQuitGroupSuccessEvent;
-
-        public static event Action<RCErrorCode> onQuitGroupFailedEvent;
-
-        public void onQuitGroupSuccess (string empty)
-        {
-            Debug.Log ("onQuitGroupSuccess");
-            if (onQuitGroupSuccessEvent != null) {
-                onQuitGroupSuccessEvent ();
-            }
-        }
-
-
-        public void onQuitGroupFailed (string errorCode)
-        {
-            var val = (RCErrorCode)int.Parse (errorCode);
-            Debug.Log ("onQuitGroupFailed : " + val);
-            if (onQuitGroupFailedEvent != null) {
-                onQuitGroupFailedEvent (val);
-            }
-        }
-
-
 
         public static event Action onAddToBlacklistSuccessEvent;
 
@@ -667,6 +618,32 @@ namespace RongCloud
                 onClearMessagesFailedEvent (val);
             }
         }
+
+
+
+		public static event Action<List<RCMessage>> onGetLatestMessagesSuccessEvent;
+
+		public void onGetLatestMessagesSuccess (string json)
+		{
+			Debug.Log ("onGetLatestMessagesSuccess : " + json);
+			if (onGetLatestMessagesSuccessEvent != null) {
+				List<RCMessage> messages = RCUtils.PraseRCMessages (json);
+				onGetLatestMessagesSuccessEvent (messages);
+			}
+		}
+
+
+		public static event Action<RCErrorCode> onGetLatestMessagesFailedEvent;
+
+		public void onGetLatestMessagesFailed (string errorCode)
+		{
+			var val = (RCErrorCode)int.Parse (errorCode);
+			Debug.Log ("onGetLatestMessagesFailed : " + val);
+			if (onGetLatestMessagesFailedEvent != null) {
+				onGetLatestMessagesFailedEvent (val);
+			}
+		}
+
 
         #endregion
 

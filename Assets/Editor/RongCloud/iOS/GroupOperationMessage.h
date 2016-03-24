@@ -18,7 +18,7 @@
 /**
  *  群组消息类
  */
-@interface GroupOperationMessage : RCMessageContent
+@interface GroupOperationMessage : RCMessageContent<NSCoding>
 /**
  *  操作人 UserId，可以为空
  */

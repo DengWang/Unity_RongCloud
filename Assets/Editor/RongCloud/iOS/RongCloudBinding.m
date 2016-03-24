@@ -43,7 +43,7 @@ int _getSdkRunningMode(){
 
 
 void _init(const char * appKey){
-    [[RCIMClient sharedRCIMClient] init: GetStringParam(appKey)];
+    [[RCIMClient sharedRCIMClient] initWithAppKey: GetStringParam(appKey)];
     [[RCIMClient sharedRCIMClient] registerMessageType: GroupOperationMessage.class];
     [[RCIMClient sharedRCIMClient] registerMessageType: GroupRequestMessage.class];
 }
@@ -53,8 +53,6 @@ void _setDeviceToken(const char * deviceToken){
 }
 
 void _connectWithToken(const char * token){
-    
-    // 快速集成第二步，连接融云服务器
     [[RCIMClient sharedRCIMClient] connectWithToken:GetStringParam(token) success: ^(NSString *userId) {
         [[RCIMClient sharedRCIMClient] setReceiveMessageDelegate:[RongCloudManager sharedManager] object:nil];
         [[RCIMClient sharedRCIMClient] setRCConnectionStatusChangeDelegate:[RongCloudManager sharedManager]];
@@ -68,30 +66,13 @@ void _connectWithToken(const char * token){
 }
 
 
-// void _disconnectWithParam(BOOL isReceivePush){
-//     [[RCIMClient sharedRCIMClient] disconnect:isReceivePush];
-// }
-
-void _disconnect() {
-    [[RCIMClient sharedRCIMClient] disconnect];
+void _disconnect(){
+     [[RCIMClient sharedRCIMClient] disconnect];
 }
 
 void _logout(){
-    [[RCIMClient sharedRCIMClient] logout];
+     [[RCIMClient sharedRCIMClient] logout];
 }
-
-// void _sendTextMessage(int conversationType,const char * targetId, const char * content, const char * extra,const char * pushContent){
-//     RCTextMessage *rcTextMessage = [RCTextMessage messageWithContent:GetStringParam(content)];
-//     rcTextMessage.extra = GetStringParam(extra);
-//     RCMessage * message = [[RCIMClient sharedRCIMClient] sendMessage:(RCConversationType)conversationType targetId:GetStringParam(targetId) content:rcTextMessage pushContent:GetStringParam(pushContent)  success:^(long messageId){
-//         UnitySendMessage( RONGCLOUDMANAGER, "onSendTextMessageSuccess", [NSString stringWithFormat:@"%li",messageId].UTF8String);
-       
-//     } error:^(RCErrorCode nErrorCode,long messageId){
-//         UnitySendMessage( RONGCLOUDMANAGER, "onSendTextMessageFailed", [NSString stringWithFormat:@"%i",nErrorCode].UTF8String);
-//     }];
-//      [[RongCloudManager sharedManager ] onReceived:message left:0 object:nil];
-// }
-
 
 void _sendTextMessage(int conversationType,const char * targetId, const char * content, const char * extra,const char * pushContent, const char * pushData){
     RCTextMessage *rcTextMessage = [RCTextMessage messageWithContent:GetStringParam(content)];
@@ -104,7 +85,6 @@ void _sendTextMessage(int conversationType,const char * targetId, const char * c
         
     }];
     UnitySendMessage(RONGCLOUDMANAGER, "onSendMessageResult", [RongCloudManager RCMessageToJson:message].UTF8String);
-    
 }
 
 
@@ -150,22 +130,6 @@ void _sendRequestMessage(int conversationType,const char * targetId, const char 
 }
 
 
-
-void _getUserInfo(const char * userId){
-    [[RCIMClient sharedRCIMClient] getUserInfo:GetStringParam(userId) success:^(RCUserInfo *userInfo) {
-        NSString * json = [RongCloudManager jsonFromObject:@{
-                                                             @"userId": userInfo.userId,
-                                                             @"name":userInfo.name,
-                                                             @"portraitUri":userInfo.portraitUri
-                                                             }];
-        
-        UnitySendMessage( RONGCLOUDMANAGER, "onGetUserInfoSuccess", json.UTF8String);
-    } error:^(RCErrorCode status) {
-        UnitySendMessage( RONGCLOUDMANAGER, "onGetUserInfoFailed", [NSString stringWithFormat:@"%i",status].UTF8String);
-    }];
-}
-
-
 int _getTotalUnreadCount(){
     return [[RCIMClient sharedRCIMClient] getTotalUnreadCount ];
 }
@@ -174,13 +138,6 @@ int _getUnreadCount(int conversationType,const char * targetId){
     return [[RCIMClient sharedRCIMClient] getUnreadCount:(RCConversationType)conversationType targetId:GetStringParam(targetId)];
 }
 
-
-// int _getUnreadCountWithoutTargetId(const char * conversationTypesJson){
-//     NSArray * conversationTypes = [RongCloudManager objectFromJson:GetStringParam(conversationTypesJson)];
-// //    NSLog(@"%@",conversationTypes);
-// //    NSArray * conversationTypes = @[@1];
-//     return [[RCIMClient sharedRCIMClient] getUnreadCount:conversationTypes];
-// }
 
 const char * _getLatestMessages(int conversationType,const char * targetId, int count){
     NSArray * latestMessages = [[RCIMClient sharedRCIMClient] getLatestMessages:(RCConversationType)conversationType targetId:GetStringParam(targetId) count:count];
@@ -198,7 +155,6 @@ const char * _getLatestMessages(int conversationType,const char * targetId, int 
     [reString appendFormat:@"%@",[values componentsJoinedByString:@","]];
     [reString appendString:@"]"];
     return MakeStringCopy(reString);
-    
 }
 
 
@@ -235,6 +191,10 @@ BOOL _setMessageReceivedStatus(long messageId,int receivedStatus){
     return  [[RCIMClient sharedRCIMClient] setMessageReceivedStatus:messageId receivedStatus:(RCReceivedStatus)receivedStatus];
 }
 
+BOOL _setMessageSentStatus(long messageId, int sentStatus){
+    return [[RCIMClient sharedRCIMClient] setMessageSentStatus:messageId sentStatus:(RCSentStatus)sentStatus];
+}
+
 void _getConversationNotificationStatus(int conversationType,const char * targetId){
     [[RCIMClient sharedRCIMClient] getConversationNotificationStatus:(RCConversationType)conversationType targetId:GetStringParam(targetId) success:^(RCConversationNotificationStatus nStatus) {
         UnitySendMessage( RONGCLOUDMANAGER, "onGetConversationNotificationStatusSuccess", [NSString stringWithFormat:@"%i",nStatus].UTF8String);
@@ -251,42 +211,7 @@ void _setConversationNotificationStatus(int conversationType,const char * target
     }];
 }
 
-void _syncGroups(const char * groupListJson){
-    
-    NSArray * strArray = [RongCloudManager objectFromJson:GetStringParam(groupListJson)];
-    //NSLog(@"%@",strArray);
-    NSMutableArray *groupList = [NSMutableArray new];
-    for(NSString * str in strArray){
-        NSDictionary * dict = [RongCloudManager objectFromJson:str];
-        RCGroup * group = [[RCGroup alloc] init];
-        group.groupId = [dict objectForKey:@"groupId"];
-        group.groupName = [dict objectForKey:@"groupName"];
-        group.portraitUri = [dict objectForKey:@"portraitUri"];
-        [groupList addObject:group];
-    }
-    [[RCIMClient sharedRCIMClient] syncGroups:groupList success:^{
-        UnitySendMessage( RONGCLOUDMANAGER, "onSyncGroupsSuccess", "");
-    } error:^(RCErrorCode status) {
-        UnitySendMessage( RONGCLOUDMANAGER, "onSyncGroupsFailed", [NSString stringWithFormat:@"%i",status].UTF8String);
-    }];
-}
 
-void _joinGroup(const char * groupId,const char * groupName){
-    [[RCIMClient sharedRCIMClient] joinGroup:GetStringParam(groupId) groupName:GetStringParam(groupName) success:^{
-        UnitySendMessage( RONGCLOUDMANAGER, "onJoinGroupSuccess", "");
-    } error:^(RCErrorCode status) {
-        UnitySendMessage( RONGCLOUDMANAGER, "onJoinGroupFailed", [NSString stringWithFormat:@"%i",status].UTF8String);
-    }];
-}
-
-
-void _quitGroup(const char * groupId){
-    [[RCIMClient sharedRCIMClient] quitGroup:GetStringParam(groupId) success:^{
-        UnitySendMessage( RONGCLOUDMANAGER, "onQuitGroupSuccess", "");
-    } error:^(RCErrorCode status) {
-        UnitySendMessage( RONGCLOUDMANAGER, "onQuitGroupFailed", [NSString stringWithFormat:@"%i",status].UTF8String);
-    }];
-}
 
 
 int _getCurrentNetworkStatus(){
@@ -328,15 +253,6 @@ void _getBlacklist(){
 }
 
 
-//void _syncUserData(const char * userDataJson){
-//    [[RCIMClient sharedRCIMClient] syncUserData:(RCUserData *)nil success:^{
-//        UnitySendMessage( RONGCLOUDMANAGER, "onSyncUserDataSuccess", "");
-//    } error:^(RCErrorCode status) {
-//        UnitySendMessage( RONGCLOUDMANAGER, "onSyncUserDataFailed", [NSString stringWithFormat:@"%i",status].UTF8String);
-//    } ];
-//}
-
-
 int _getConnectionStatus(){
     return (int)[[RCIMClient sharedRCIMClient] getConnectionStatus];
 }
@@ -352,9 +268,10 @@ void _getRemoteHistoryMessages(int conversationType,const char * targetId,long r
         [reString appendFormat:@"%@",[values componentsJoinedByString:@","]];
         [reString appendString:@"]"];
         UnitySendMessage( RONGCLOUDMANAGER, "onGetRemoteHistoryMessagesSuccess", MakeStringCopy(reString));
+    } error:^(RCErrorCode status) {
+        UnitySendMessage( RONGCLOUDMANAGER, "onGetRemoteHistoryMessagesFailed", [NSString stringWithFormat:@"%i",status].UTF8String);
     }];
 }
-
 
 
 void _joinChatRoom(const char * targetId, int messageCount){
@@ -383,8 +300,8 @@ void _getNotificationQuietHours(){
     }];
 }
 
-void _setConversationNotificationQuietHours(const char * startTime, int spansMin){
-    [[RCIMClient sharedRCIMClient] setConversationNotificationQuietHours:GetStringParam(startTime) spanMins:spansMin success:^{
+void _setNotificationQuietHours(const char * startTime, int spansMin){
+    [[RCIMClient sharedRCIMClient] setNotificationQuietHours:GetStringParam(startTime) spanMins:spansMin success:^{
         UnitySendMessage( RONGCLOUDMANAGER, "onSetNotificationQuietHoursFailed", "");
     } error:^(RCErrorCode status) {
         UnitySendMessage( RONGCLOUDMANAGER, "onSetNotificationQuietHoursFailed", [NSString stringWithFormat:@"%i",status].UTF8String);
@@ -392,29 +309,11 @@ void _setConversationNotificationQuietHours(const char * startTime, int spansMin
     }];
 }
 
-void _removeConversationNotificationQuietHours(){
-    [[RCIMClient sharedRCIMClient] removeConversationNotificationQuietHours:^{
+void _removeNotificationQuietHours(){
+    [[RCIMClient sharedRCIMClient] removeNotificationQuietHours:^{
         UnitySendMessage( RONGCLOUDMANAGER, "onRemoveNotificationQuietHoursSuccess", "");
-
     } error:^(RCErrorCode status) {
         UnitySendMessage( RONGCLOUDMANAGER, "onRemoveNotificationQuietHoursFailed", [NSString stringWithFormat:@"%i",status].UTF8String);
 
     }];
 }
-
-//const char *  _getConversationList(const char * conversationTypesJson){
-//    NSArray * conversationTypes = [RongCloudManager objectFromJson:GetStringParam(conversationTypesJson)];
-//    //    NSLog(@"%@",conversationTypes);
-//    //    NSArray * conversationTypes = @[@1];
-//    NSArray * conversationList = [[RCIMClient sharedRCIMClient] getConversationList:conversationTypes];
-//    
-//    NSMutableString *reString = [NSMutableString string];
-//    [reString appendString:@"["];
-//    NSMutableArray *values = [NSMutableArray array];
-//    for (RCConversation * conversation  in conversationList) {
-//        [values addObject:[NSString stringWithFormat:@"%@",[RongCloudManager jsonFromObject:conversation.jsonDict]]];
-//    }
-//    [reString appendFormat:@"%@",[values componentsJoinedByString:@","]];
-//    [reString appendString:@"]"];
-//    return MakeStringCopy(reString);
-//}

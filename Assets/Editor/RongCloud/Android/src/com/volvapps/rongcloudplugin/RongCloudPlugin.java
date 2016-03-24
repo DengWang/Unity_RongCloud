@@ -14,6 +14,7 @@ import android.util.Log;
 import io.rong.imlib.RongIMClient;
 import io.rong.imlib.RongIMClient.BlacklistStatus;
 import io.rong.imlib.RongIMClient.ErrorCode;
+import io.rong.imlib.RongIMClient.OperationCallback;
 import io.rong.imlib.model.Conversation;
 import io.rong.imlib.model.Conversation.ConversationNotificationStatus;
 import io.rong.imlib.model.Message;
@@ -22,11 +23,6 @@ import io.rong.message.CommandNotificationMessage;
 import io.rong.message.TextMessage;
 
 public class RongCloudPlugin extends RongCloudPluginBase {
-
-	// public void _init() {
-	// RongIMClient.init(getActivity());
-	// RongCloudEvent.init();
-	// }
 
 	public void _connectWithToken(String token) {
 		RongIMClient.connect(token, new RongIMClient.ConnectCallback() {
@@ -57,7 +53,7 @@ public class RongCloudPlugin extends RongCloudPluginBase {
 
 	public void _addToBlacklist(String userId) {
 		RongIMClient.getInstance().addToBlacklist(userId,
-				new RongIMClient.AddToBlackCallback() {
+				new OperationCallback() {
 
 					@Override
 					public void onSuccess() {
@@ -151,6 +147,10 @@ public class RongCloudPlugin extends RongCloudPluginBase {
 		RongIMClient.getInstance().disconnect();
 	}
 
+	public void _logout() {
+		RongIMClient.getInstance().logout();
+	}
+
 	public void _getBlacklist() {
 		RongIMClient.getInstance().getBlacklist(
 				new RongIMClient.GetBlacklistCallback() {
@@ -232,38 +232,33 @@ public class RongCloudPlugin extends RongCloudPluginBase {
 	}
 
 	public String _getCurrentUserId() {
+
 		return RongIMClient.getInstance().getCurrentUserId();
-	}
-
-	public long _getDeltaTime() {
-		return RongIMClient.getInstance().getDeltaTime();
-	}
-
-	public String _getHistoryMessages(int conversationType, String targetId,
-			int oldestMessageId, int count) {
-		List<Message> messages = RongIMClient.getInstance().getHistoryMessages(
-				Conversation.ConversationType.setValue(conversationType),
-				targetId, oldestMessageId, count);
-		if (messages == null) {
-			Log.i(App.TAG, "messages is null");
-			return "[]";
-		} else {
-			return JsonHelper.MessagesToJSON(messages);
-		}
 
 	}
 
-	public String _getLatestMessages(int conversationType, String targetId,
+	public void _getLatestMessages(int conversationType, String targetId,
 			int count) {
-		List<Message> messages = RongIMClient.getInstance().getLatestMessages(
+
+		RongIMClient.getInstance().getLatestMessages(
 				Conversation.ConversationType.setValue(conversationType),
-				targetId, count);
-		if (messages == null) {
-			Log.i(App.TAG, "messages is null");
-			return "[]";
-		} else {
-			return JsonHelper.MessagesToJSON(messages);
-		}
+				targetId, count,
+				new RongIMClient.ResultCallback<List<Message>>() {
+
+					@Override
+					public void onSuccess(List<Message> messages) {
+						UnitySendMessage("onGetLatestMessagesSuccess",
+								JsonHelper.MessagesToJSON(messages));
+
+					}
+					@Override
+					public void onError(ErrorCode paramErrorCode) {
+						UnitySendMessage("onGetLatestMessagesFailed",
+								String.valueOf(paramErrorCode.getValue()));
+					}
+
+				});
+
 	}
 
 	public void _getNotificationQuietHours() {
@@ -308,18 +303,7 @@ public class RongCloudPlugin extends RongCloudPluginBase {
 								String.valueOf(paramErrorCode.getValue()));
 
 					}
-
 				});
-	}
-
-	public int _getTotalUnreadCount() {
-		return RongIMClient.getInstance().getTotalUnreadCount();
-	}
-
-	public int _getUnreadCount(int conversationType, String targetId) {
-		return RongIMClient.getInstance().getUnreadCount(
-				Conversation.ConversationType.setValue(conversationType),
-				targetId);
 	}
 
 	public void _joinChatRoom(String chatRoomId, int count) {
@@ -342,30 +326,6 @@ public class RongCloudPlugin extends RongCloudPluginBase {
 				});
 	}
 
-	public void _joinGroup(String groupId, String groupName) {
-		RongIMClient.getInstance().joinGroup(groupId, groupName,
-				new RongIMClient.OperationCallback() {
-
-					@Override
-					public void onSuccess() {
-						UnitySendMessage("onJoinGroupSuccess", "");
-
-					}
-
-					@Override
-					public void onError(ErrorCode paramErrorCode) {
-						UnitySendMessage("onJoinGroupFailed",
-								String.valueOf(paramErrorCode.getValue()));
-
-					}
-
-				});
-	}
-
-	public void _logout() {
-		RongIMClient.getInstance().logout();
-	}
-
 	public void _quitChatRoom(String chatRoomId) {
 		RongIMClient.getInstance().quitChatRoom(chatRoomId,
 				new RongIMClient.OperationCallback() {
@@ -379,24 +339,6 @@ public class RongCloudPlugin extends RongCloudPluginBase {
 					@Override
 					public void onError(ErrorCode paramErrorCode) {
 						UnitySendMessage("onQuitChatRoomFailed",
-								String.valueOf(paramErrorCode.getValue()));
-
-					}
-				});
-	}
-
-	public void _quitGroup(String groupId) {
-		RongIMClient.getInstance().quitGroup(groupId,
-				new RongIMClient.OperationCallback() {
-					@Override
-					public void onSuccess() {
-						UnitySendMessage("onQuitGroupSuccess", "");
-
-					}
-
-					@Override
-					public void onError(ErrorCode paramErrorCode) {
-						UnitySendMessage("onQuitGroupFailed",
 								String.valueOf(paramErrorCode.getValue()));
 
 					}
@@ -429,7 +371,7 @@ public class RongCloudPlugin extends RongCloudPluginBase {
 
 	public void _removeFromBlacklist(String userId) {
 		RongIMClient.getInstance().removeFromBlacklist(userId,
-				new RongIMClient.RemoveFromBlacklistCallback() {
+				new OperationCallback() {
 					@Override
 					public void onSuccess() {
 						UnitySendMessage("onRemoveFromBlacklistSuccess", "");
@@ -631,41 +573,4 @@ public class RongCloudPlugin extends RongCloudPluginBase {
 					}
 				});
 	}
-
-	public void _syncGroups(String groupList) {
-		RongIMClient.getInstance().syncGroup(
-				JsonHelper.GroupsFromJSON(groupList),
-				new RongIMClient.OperationCallback() {
-					@Override
-					public void onSuccess() {
-						UnitySendMessage("onSyncGroupsSuccess", "");
-					}
-
-					@Override
-					public void onError(ErrorCode paramErrorCode) {
-						UnitySendMessage("onSyncGroupsFailed",
-								String.valueOf(paramErrorCode.getValue()));
-
-					}
-				});
-	}
-
-	// public void _syncUserData(UserData userData) {
-	// RongIMClient.getInstance().syncUserData(userData,
-	// new RongIMClient.OperationCallback() {
-	//
-	// @Override
-	// public void onSuccess() {
-	// // TODO Auto-generated method stub
-	//
-	// }
-	//
-	// @Override
-	// public void onError(ErrorCode paramErrorCode) {
-	// // TODO Auto-generated method stub
-	//
-	// }
-	// });
-	// }
-
 }

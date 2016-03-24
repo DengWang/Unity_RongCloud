@@ -102,6 +102,7 @@ public class JsonHelper {
 			messageMap.put("receivedTime", message.getReceivedTime());
 			messageMap.put("sentTime", message.getSentTime());
 			messageMap.put("objectName", message.getObjectName());
+			messageMap.put("messageUId", message.getUId());
 
 			MessageContent messageContent = message.getContent();
 			JSONObject contentMap = new JSONObject();

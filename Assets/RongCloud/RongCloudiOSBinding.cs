@@ -69,14 +69,7 @@ namespace RongCloud
 
 
 
-		//      [DllImport ("__Internal")]
-		//      private static extern void _disconnectWithParam (bool isReceivePush);
-		//
-		//      public static void Disconnect (bool isReceivePush)
-		//      {
-		//          if (Application.platform == RuntimePlatform.IPhonePlayer)
-		//              _disconnectWithParam (isReceivePush);
-		//      }
+
 
 		[DllImport ("__Internal")]
 		private static extern void _disconnect ();
@@ -98,14 +91,7 @@ namespace RongCloud
 		}
 
 
-		//      [DllImport ("__Internal")]
-		//      private static extern void _sendTextMessage (int conversationType, string targetId, string content, string extra, string pushContent);
-		//
-		//      public static void SendTextMessage (RCConversationType conversationType, string targetId, string content, string extra, string pushContent)
-		//      {
-		//          if (Application.platform == RuntimePlatform.IPhonePlayer)
-		//              _sendTextMessage ((int)conversationType, targetId, content, extra, pushContent);
-		//      }
+
 
 		[DllImport ("__Internal")]
 		private static extern void _sendTextMessage (int conversationType, string targetId, string content, string extra, string pushContent, string pushData);
@@ -148,70 +134,18 @@ namespace RongCloud
 		}
 
 
-
-		[DllImport ("__Internal")]
-		private static extern int _getTotalUnreadCount ();
-
-		public static int GetTotalUnreadCount ()
-		{
-			if (Application.platform == RuntimePlatform.IPhonePlayer) {
-				return _getTotalUnreadCount ();
-			}
-			return 0;
-		}
-
-
-		[DllImport ("__Internal")]
-		private static extern int _getUnreadCount (int conversationType, string targetId);
-
-		public static int GetUnreadCount (RCConversationType conversationType, string targetId)
-		{
-			if (Application.platform == RuntimePlatform.IPhonePlayer) {
-				return _getUnreadCount ((int)conversationType, targetId);
-			}
-			return 0;
-		}
-
-		//      [DllImport ("__Internal")]
-		//      private static extern int _getUnreadCountWithoutTargetId (string  conversationTypeList);
-		//
-		//      public static int GetUnreadCount (List<RCConversationType> conversationTypeList)
-		//      {
-		//          if (Application.platform == RuntimePlatform.IPhonePlayer) {
-		//              List<int> tempConversationTypeList = new List<int> ();
-		//              foreach (var item in conversationTypeList) {
-		//                  tempConversationTypeList.Add ((int)item);
-		//              }
-		//              return _getUnreadCountWithoutTargetId (MiniJSON.Json.Serialize (tempConversationTypeList));
-		//          }
-		//          return 0;
-		//      }
-
-
 		[DllImport ("__Internal")]
 		private static extern string _getLatestMessages (int conversationType, string targetId, int count);
 
-		public static List<RCMessage> GetLatestMessages (RCConversationType conversationType, string targetId, int count)
+		public static void GetLatestMessages (RCConversationType conversationType, string targetId, int count)
 		{
 			if (Application.platform == RuntimePlatform.IPhonePlayer) {
 				string json = _getLatestMessages ((int)conversationType, targetId, count);
-				return  RCUtils.PraseRCMessages (json);
+				RongCloudManager.inst.onGetLatestMessagesSuccess (json);
+
 			}
-			return null;
 		}
 
-		[DllImport ("__Internal")]
-		private static extern string _getHistoryMessages (int conversationType, string targetId, long messageId, int count);
-
-		public static List<RCMessage> GetHistoryMessages (RCConversationType conversationType, string targetId, long messageId, int count)
-		{
-			if (Application.platform == RuntimePlatform.IPhonePlayer) {
-				string json = _getHistoryMessages ((int)conversationType, targetId, messageId, count);
-				Debug.Log (json);
-				return RCUtils.PraseRCMessages (json);
-			}
-			return null;
-		}
 
 
 		[DllImport ("__Internal")]
@@ -261,7 +195,16 @@ namespace RongCloud
 			return false;
 		}
 
+		[DllImport ("__Internal")]
+		private static extern bool _setMessageSentStatus (long  messageId, int receivedStatus);
 
+		public static bool SetMessageSentStatus (long messageId, RCSentStatus sentStatus)
+		{
+			if (Application.platform == RuntimePlatform.IPhonePlayer) {
+				return _setMessageSentStatus (messageId, (int)sentStatus);
+			}
+			return false;
+		}
 
 
 		[DllImport ("__Internal")]
@@ -289,37 +232,7 @@ namespace RongCloud
 
 
 
-		[DllImport ("__Internal")]
-		private static extern void _syncGroups (string groupList);
-
-		public static void SyncGroups (List<RCGroup> groupList)
-		{
-			if (Application.platform == RuntimePlatform.IPhonePlayer) {
-				_syncGroups (MiniJSON.Json.Serialize (groupList));
-			}
-		}
-
-
-		[DllImport ("__Internal")]
-		private static extern void _joinGroup (string groupId, string groupName);
-
-		public static void JoinGroup (string groupId, string groupName)
-		{
-			if (Application.platform == RuntimePlatform.IPhonePlayer) {
-				_joinGroup (groupId, groupName);
-			}
-		}
-
-
-		[DllImport ("__Internal")]
-		private static extern void _quitGroup (string groupId);
-
-		public static void QuitGroup (string groupId)
-		{
-			if (Application.platform == RuntimePlatform.IPhonePlayer) {
-				_quitGroup (groupId);
-			}
-		}
+		
 
 
 		[DllImport ("__Internal")]
@@ -437,46 +350,25 @@ namespace RongCloud
 
 
 		[DllImport ("__Internal")]
-		private static extern void _setConversationNotificationQuietHours (string startTime, int spanMins);
+		private static extern void _setNotificationQuietHours (string startTime, int spanMins);
 
 		public static void SetNotificationQuietHours (string startTime, int spanMins)
 		{
 			if (Application.platform == RuntimePlatform.IPhonePlayer) {
-				_setConversationNotificationQuietHours (startTime, spanMins);
+				_setNotificationQuietHours (startTime, spanMins);
 			}
 		}
 
 
 		[DllImport ("__Internal")]
-		private static extern void _removeConversationNotificationQuietHours ();
+		private static extern void _removeNotificationQuietHours ();
 
 		public static void RemoveNotificationQuietHours ()
 		{
 			if (Application.platform == RuntimePlatform.IPhonePlayer) {
-				_removeConversationNotificationQuietHours ();
+				_removeNotificationQuietHours ();
 			}
 		}
-
-		//      [DllImport ("__Internal")]
-		//      private static extern string _getConversationList (string  conversationTypeList);
-		//
-		//      public static string GetConversationList (List<RCConversationType> conversationTypeList)
-		//      {
-		//          if (Application.platform == RuntimePlatform.IPhonePlayer) {
-		//
-		//              List<int> tempConversationTypeList = new List<int> ();
-		//              foreach (var item in conversationTypeList) {
-		//                  tempConversationTypeList.Add ((int)item);
-		//              }
-		//              return _getConversationList (MiniJSON.Json.Serialize (tempConversationTypeList));
-		//          }
-		//          return null;
-		//      }
-
-
-
-
-
 	}
 	#endif
 }

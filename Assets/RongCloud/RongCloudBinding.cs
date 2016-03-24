@@ -8,7 +8,7 @@ namespace RongCloud
 	using Binding = RongCloudiOSBinding;
 
 	
-#elif UNITY_ANDROID
+	#elif UNITY_ANDROID
 	using Binding = RongCloudAndroidBinding;
 	#endif
 
@@ -72,7 +72,6 @@ namespace RongCloud
 
 		public static void DeleteMessages (List<long> messageIds)
 		{
-			//TODO
 			Binding.DeleteMessages (messageIds);
 		}
 
@@ -80,6 +79,12 @@ namespace RongCloud
 		public static void Disconnect ()
 		{
 			Binding.Disconnect ();
+		}
+
+
+		public static void Logout ()
+		{
+			Binding.Logout ();
 		}
 
 
@@ -91,7 +96,6 @@ namespace RongCloud
 
 		public static void GetBlacklistStatus (string userId)
 		{
-			//TODO
 			Binding.GetBlacklistStatus (userId);
 		}
 
@@ -123,17 +127,12 @@ namespace RongCloud
 		}
 		#endif
 
-		public static List<RCMessage> GetHistoryMessages (RCConversationType conversationType, string targetId, int oldestMessageId, int count)
+
+
+		public static void GetLatestMessages (RCConversationType conversationType, string targetId, int count)
 		{
-			return Binding.GetHistoryMessages (conversationType, targetId, oldestMessageId, count);
+			Binding.GetLatestMessages (conversationType, targetId, count);
 		}
-
-
-		public static List<RCMessage> GetLatestMessages (RCConversationType conversationType, string targetId, int count)
-		{
-			return Binding.GetLatestMessages (conversationType, targetId, count);
-		}
-
 
 		public static void GetNotificationQuietHours ()
 		{
@@ -145,15 +144,6 @@ namespace RongCloud
 			Binding.GetRemoteHistoryMessages (conversationType, targetId, dataTime, count);
 		}
 
-		public static int GetTotalUnreadCount ()
-		{
-			return Binding.GetTotalUnreadCount ();
-		}
-
-		public static int GetUnreadCount (RCConversationType conversationType, string targetId)
-		{
-			return Binding.GetUnreadCount (conversationType, targetId);
-		}
 
 
 		public static void joinChatRoom (string chatRoomId, int messageCount)
@@ -161,15 +151,6 @@ namespace RongCloud
 			Binding.JoinChatRoom (chatRoomId, messageCount);
 		}
 
-		public static void JoinGroup (string groupId, string groupName)
-		{
-			Binding.JoinGroup (groupId, groupName);
-		}
-
-		public static void Logout ()
-		{
-			Binding.Logout ();
-		}
 
 
 		public static void QuitChatRoom (string chatRoomId)
@@ -178,10 +159,7 @@ namespace RongCloud
 		}
 
 
-		public static void QuitGroup (string groupId)
-		{
-			Binding.QuitGroup (groupId);
-		}
+
 
 		#if UNITY_ANDROID
 		public static void Reconnect ()
@@ -189,6 +167,9 @@ namespace RongCloud
 			RongCloudAndroidBinding.Reconnect ();
 		}
 		#endif
+
+
+
 		public static void RemoveFromBlacklist (string userId)
 		{
 			Binding.RemoveFromBlacklist (userId);
@@ -211,12 +192,12 @@ namespace RongCloud
 			Binding.SetMessageReceivedStatus (messageId, receivedStatus);
 		}
 
-		#if UNITY_ANDROID
+
 		public static void SetMessageSentStatus (int messageId, RCSentStatus sentStatus)
 		{
-			RongCloudAndroidBinding.SetMessageSentStatus (messageId, sentStatus);
+			Binding.SetMessageSentStatus (messageId, sentStatus);
 		}
-		#endif
+
 
 
 		public static void  SetNotificationQuietHours (string startTime, int spanMinutes)
@@ -224,10 +205,7 @@ namespace RongCloud
 			Binding.SetNotificationQuietHours (startTime, spanMinutes);
 		}
 
-		public static void SyncGroups (List<RCGroup> groups)
-		{
-			Binding.SyncGroups (groups);
-		}
+
 
 	}
 }

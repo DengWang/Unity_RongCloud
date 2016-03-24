@@ -115,6 +115,7 @@
                                                          @"sentTime":[NSString stringWithFormat:@"%lli",message.sentTime],
                                                          @"objectName":message.objectName,
                                                          @"content":content == nil ? @"{}":content,
+                                                         @"messageUId":message.messageUId,
                                                          }];
     return json;
     

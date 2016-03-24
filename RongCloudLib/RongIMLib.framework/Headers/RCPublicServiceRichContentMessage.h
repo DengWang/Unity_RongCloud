@@ -10,22 +10,29 @@
 //  RCPublicServiceMultiRichContentMessage.h
 //  Created by litao on 15/4/15.
 
-#import <RongIMLib/RongIMLib.h>
+#import "RCMessageContent.h"
 #import "RCRichContentItem.h"
+
+/*!
+ 公众服务图文消息的类型名
+ */
 #define RCSingleNewsMessageTypeIdentifier @"RC:PSImgTxtMsg"
 
-/**
- * 公众服务账号单图文消息
+/*!
+ 公众服务图文消息类
+ 
+ @discussion 公众服务图文消息类，此消息会进行存储并计入未读消息数。
  */
 @interface RCPublicServiceRichContentMessage : RCMessageContent
 
-/**
- *  消息内容
- *  类型是RCRichContentItem
+/*!
+ 公众服务图文信息条目RCRichContentItem内容
  */
 @property(nonatomic, strong) RCRichContentItem *richConent;
-/**
- *  附加信息
+
+/*!
+ 图文消息的附加信息
  */
 @property(nonatomic, strong) NSString *extra;
+
 @end
